@@ -21,13 +21,14 @@
  * SOFTWARE.
  */
 /* eslint-disable no-case-declarations */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Accordion, Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Pill from './pills/Pill';
 import { UtmParams, defaultUTMParams } from '../types';
+import PillArea from './pills/PillArea';
 
 export default function ConfigEditor({
   showMe,
@@ -40,13 +41,12 @@ export default function ConfigEditor({
   const [config, setConfig] = useState<UtmParams>(defaultUTMParams);
   const [baseVal, setBaseVal] = useState('');
   const [termVal, setTermVal] = useState('');
+  const [teamVal, setTeamVal] = useState('');
+  const [regionVal, setRegionVal] = useState('');
   const [mediumVal, setMediumVal] = useState('');
   const [targetValidated, setTargetValidated] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [termPills, setTermPills] = useState<JSX.Element>([]);
-  const [mediumPills, setMediumPills] = useState<JSX.Element>([]);
-  const [basePills, setBasePills] = useState<JSX.Element>([]);
 
   // get the configuration
   useEffect(() => {
@@ -66,260 +66,225 @@ export default function ConfigEditor({
     setShow(showMe);
   }, [showMe]);
 
-  const deletePillValue = (Ptype: string, value: string) => {
-    let newPills: JSX.Element[] = [];
-    switch (Ptype) {
-      case 'term':
-        newPills = termPills.filter((p) => p.key !== value);
-        setTermPills(newPills);
-        break;
-      case 'medium':
-        newPills = mediumPills.filter((p) => p.key !== value);
-        setMediumPills(newPills);
-        break;
-      case 'base':
-        newPills = basePills.filter((p) => p.key !== value);
-        setBasePills(newPills);
-        break;
-      default:
-        break;
-    }
-  };
-  /* delete a Target pill. This is used as a callback to the Pill component */
-  const deleteBasePill = ({ target }: { target: string }) => {
-    const oldBases: string[] = config.utm_bases.value;
-    oldBases.forEach((v: string, index): void => {
-      if (v === target) {
-        oldBases.splice(index, 1);
+  const deletePillValue = (value: string, type: string) => {
+    switch (type) {
+      case 'utm_target':
+        const newTar = config.utm_bases.value.filter((p) => p !== value);
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
-          const newTarget = {
+          const newBase = {
             ...newConfig.utm_bases,
           };
-          newTarget.value = oldBases;
-          newConfig.utm_bases = newTarget;
+          newBase.value = newTar;
+          newConfig.utm_bases = newBase;
           return newConfig;
         });
-      }
-    });
-  };
-
-  useEffect(() => {
-    const newPills: JSX.Element[] = [];
-    config.utm_bases.value.forEach((v: string) => {
-      newPills.push(
-        <Pill key={`bases-${v}`} id={v} value={v} callback={deleteBasePill} />
-      );
-    });
-    setBasePills(newPills);
-  }, [config.utm_bases.value]);
-
-  /* delete a Term pill. This is used as a callback to the Pill component */
-  const deleteTermPill = ({ target }: { target: string }) => {
-    const oldTerms: string[] = config.utm_term.value;
-    oldTerms.forEach((term: string, index) => {
-      if (term === target) {
-        oldTerms.splice(index, 1);
+        break;
+      case 'utm_term':
+        const newTrm = config.utm_term.value.filter((p) => p !== value);
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTerm = {
             ...newConfig.utm_term,
           };
-          newTerm.value = oldTerms;
+          newTerm.value = newTrm;
           newConfig.utm_term = newTerm;
           return newConfig;
         });
-      }
-    });
-  };
-
-  useEffect(() => {
-    const pills = config.utm_term.value.map((term) => (
-      <Pill
-        id={term}
-        value={term}
-        callback={deleteTermPill}
-        key={`term-pill-${term}`}
-      />
-    ));
-    setTermPills(pills);
-  }, [config.utm_term.value]);
-
-  /* delete a Medium pill. This is used as a callback to the Pill component */
-  const deleteMediumPill = ({ target }: { target: string }) => {
-    const oldMediums: string[] = config.utm_medium.value;
-    oldMediums.forEach((term: string, index) => {
-      if (term === target) {
-        oldMediums.splice(index, 1);
+        break;
+      case 'utm_medium':
+        const newMeds = config.utm_medium.value.filter((p) => p !== value);
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
-          const newMedium = {
+          const newMed = {
             ...newConfig.utm_medium,
           };
-          newMedium.value = oldMediums;
-          newConfig.utm_medium = newMedium;
+          newMed.value = newMeds;
+          newConfig.utm_medium = newMed;
           return newConfig;
         });
+        break;
+      case 'team_name':
+        const newTeams = config.team_name.value.filter((p) => p !== value);
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newTeam = {
+            ...newConfig.team_name,
+          };
+          newTeam.value = newTeams;
+          newConfig.team_name = newTeam;
+          return newConfig;
+        });
+        break;
+      case 'region_name':
+        const newReg = config.region_name.value.filter((p) => p !== value);
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newTeam = {
+            ...newConfig.region_name,
+          };
+          newTeam.value = newTeams;
+          newConfig.region_name = newTeam;
+          return newConfig;
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const addPill = (event: ChangeEvent, type: string) => {
+    switch (type) {
+      case 'utm_target':
+        setBaseVal(event?.target?.value);
+        if (!event?.target?.value.includes(',')) {
+          return;
+        }
+        setBaseVal('');
+        let newTar = config.utm_bases.value;
+        newTar.push(event?.target?.value?.replace(/,/g, ''));
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newBase = {
+            ...newConfig.utm_bases,
+          };
+          newBase.value = newTar;
+          newConfig.utm_bases = newBase;
+          return newConfig;
+        });
+        break;
+      case 'utm_term':
+        setTermVal(event?.target?.value);
+        if (!event?.target?.value.includes(',')) {
+          return;
+        }
+        setTermVal('');
+        let newTrm = config.utm_term.value;
+        newTrm.push(event?.target?.value?.replace(/,/g, ''));
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newTerm = {
+            ...newConfig.utm_term,
+          };
+          newTerm.value = newTrm;
+          newConfig.utm_term = newTerm;
+          return newConfig;
+        });
+        break;
+      case 'team_name':
+        setTeamVal(event?.target?.value);
+        if (!event?.target?.value.includes(',')) {
+          return;
+        }
+        setTeamVal('');
+        let newTm = config.team_name.value;
+        newTm.push(event?.target?.value?.replace(/,/g, ''));
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newTeam = {
+            ...newConfig.team_name,
+          };
+          newTeam.value = newTm;
+          newConfig.team_name = newTeam;
+          return newConfig;
+        });
+        break;
+      case 'team_name':
+        setTeamVal(event?.target?.value);
+        if (!event?.target?.value.includes(',')) {
+          return;
+        }
+        setTeamVal('');
+        let newR = config.team_name.value;
+        newR.push(event?.target?.value?.replace(/,/g, ''));
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newTeam = {
+            ...newConfig.region_name,
+          };
+          newTeam.value = newR;
+          newConfig.region_name = newTeam;
+          return newConfig;
+        });
+        break;
+      case 'utm_medium':
+        setMediumVal(event?.target?.value);
+        if (!event?.target?.value.includes(',')) {
+          return;
+        }
+        setMediumVal('');
+        let newMeds = config.utm_medium.value;
+        newMeds.push(event?.target?.value?.replace(/,/g, ''));
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newMed = {
+            ...newConfig.utm_medium,
+          };
+          newMed.value = newMeds;
+          newConfig.utm_medium = newMed;
+          return newConfig;
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const setFieldValue = (event: ChangeEvent, type: string) => {
+    const ind = event?.target?.value.indexOf('(');
+    const nv = event?.target?.value.indexOf('(') > -1 ? event?.target?.value.substring(0, event?.target?.value.indexOf('(') -1).trim(' ') : event?.target?.value;
+    switch (type) {
+      case 'utm_target':
+        setConfig((prevConfig) => {
+        const newConfig = { ...prevConfig };
+          const newVal = {
+            ...newConfig.utm_target,
+          };
+          newVal.label = nv;
+          newConfig.utm_target = newVal;
+          return newConfig;
+        });
+        break;
+      case 'utm_term':
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newVal = {
+            ...newConfig.utm_term,
+          };
+          newVal.label = nv;
+          newConfig.utm_term = newVal;
+          return newConfig;
+        }
+        );
+        break;
+      case 'utm_medium':
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newVal = {
+            ...newConfig.utm_medium,
+          };
+          newVal.label = nv;
+          newConfig.utm_medium = newVal;
+          return newConfig;
+        }
+        );
+        break;
+        case 'team_name':
+        setConfig((prevConfig) => {
+          const newConfig = { ...prevConfig };
+          const newVal = {
+            ...newConfig.team_name,
+          };
+          newVal.label = nv;
+          newConfig.team_name = newVal;
+          return newConfig;
+        }
+        );
+        break;
+      default:
+        break;
       }
-    });
   };
-  useEffect(() => {
-    const pills = config.utm_medium.value.map((term) => (
-      <Pill
-        id={term}
-        value={term}
-        callback={deleteMediumPill}
-        key={`med-pill-${term}`}
-      />
-    ));
-    setMediumPills(pills);
-  }, [config.utm_medium.value]);
-
-  // function makePills({
-  //   pillType,
-  //   value,
-  // }: {
-  //   pillType: string;
-  //   value: string[];
-  // }): JSX.Element[] {
-  //   if (value === undefined) {
-  //     return <></>;
-  //   }
-  //   const pills: JSX.Element[] = [];
-  //   value.forEach((v: string) => {
-  //     let cb = null;
-  //     switch (pillType) {
-  //       case 'utm_target':
-  //         cb = deleteTargetPill;
-  //         break;
-  //       case 'utm_term':
-  //         cb = deleteTermPill;
-  //         break;
-  //       case 'utm_medium':
-  //         cb = deleteMediumPill;
-  //         break;
-  //       default:
-  //         break;
-  //     }
-
-  //     pills.push(<Pill id={`${type}-${v}`} value={v} callback={cb} />);
-  //   });
-  //   return { pills };
-  // }
-
-  /* Add a new Target pill. This is used as a callback to the Pill component */
-  // function termPillElements (terms) => {
-  //   terms.value.map((term: string, index) => (
-  //   <Pill
-  //     id={`utm_term-${index}`}
-  //     value={term}
-  //     type="utm_term"
-  //     callback={deleteTermPill}
-  //   />
-  // ));
-
-  // const mediumPillElements = config.utm_medium.value.map(
-  //   (med: string, index) => (
-  //     <Pill
-  //       id={`utm_medium-${index}`}
-  //       value={med}
-  //       type="utm_medium"
-  //       callback={deleteMediumPill}
-  //     />
-  //   )
-  // );
-
-  // const targetPillElements = config.utm_target.value.map(
-  //   (tar: string, index) => (
-  //     <Pill
-  //       id={`utm_target-${index}`}
-  //       value={tar}
-  //       type="utm_target"
-  //       callback={deleteTargetPill}
-  //     />
-  //   )
-  // );
-
-  /* add a pill. This is used as a callback to the values field in targets, terms and mediums */
-  const createTermPills = (event: EventKey) => {
-    const v = event.target.value;
-    const form = event.currentTarget;
-    const t = event.target.id;
-    setTermVal(event.target.value);
-    if (!event.target.value.includes(',')) {
-      return;
-    }
-    const val = v.replace(/,/g, '');
-    // const i = val.toLowerCase().replace(/ /g, '-');
-    const terms: string[] = config.utm_term.value;
-    terms.push(val);
-    setConfig((prevConfig) => {
-      const newConfig = { ...prevConfig };
-      const newTerm = {
-        ...newConfig.utm_term,
-      };
-      newTerm.value = terms;
-      newConfig.utm_term = newTerm;
-      return newConfig;
-    });
-    setTermVal('');
-  };
-  const createMediumPills = (event: EventKey) => {
-    const v = event.target.value;
-    const form = event.currentTarget;
-    const t = event.target.id;
-    setMediumVal(event.target.value);
-    if (!event.target.value.includes(',')) {
-      return;
-    }
-    const val: string = v.replace(/,/g, '');
-    // const id = val.toLowerCase().replaceAll(' ', '-');
-    const mediums: string[] = config.utm_medium.value;
-    mediums.push(val);
-    setConfig((prevConfig) => {
-      const newConfig = { ...prevConfig };
-      const newMedium = {
-        ...newConfig.utm_medium,
-      };
-      newMedium.value = mediums;
-      newConfig.utm_medium = newMedium;
-      return newConfig;
-    });
-    setMediumVal('');
-  };
-  const createTargetPills = (event: EventKey) => {
-    const v = event.target.value;
-    const form = event.currentTarget;
-    const t = event.target.id;
-    setBaseVal(event.target.value);
-    if (!event.target.value.includes(',')) {
-      return;
-    }
-    const val: string = v.replace(/,/g, '');
-    if (val.search(/^http[s]*:\/\/|^ftp:\/\/ /) !== 0) {
-      if (form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      setTargetValidated(true);
-      return;
-    }
-    // let tID: string = val.replace(/^(http[s]*:\/\/)|(^ftp):\/\/ /g, '');
-    // tID = tID.replace(/[`~!@#$%^&*()_+={|\\\/?.,<>'";:} ]+/g, '-');
-    const bases: string[] = config.utm_target.value;
-    bases.push(val);
-    setConfig((prevConfig) => {
-      const newConfig = { ...prevConfig };
-      const newTarget = {
-        ...newConfig.utm_target,
-      };
-      newTarget.value = bases;
-      newConfig.utm_target = newTarget;
-      return newConfig;
-    });
-    setBaseVal('');
-  };
-
   /* handle closing without saving */
   const handleCancel = () => {
     handleClose();
@@ -366,6 +331,7 @@ export default function ConfigEditor({
         </Modal.Header>
         <Modal.Body>
           <Accordion>
+            {/* UTM Target */}
             <Accordion.Item eventKey="0">
               <Accordion.Header>
                 <strong>utm_target</strong>
@@ -387,15 +353,7 @@ export default function ConfigEditor({
                           : `${config.utm_target.label}`
                       }
                       onChange={(e) => {
-                        setConfig((prevConfig) => {
-                          const newConfig = { ...prevConfig };
-                          const newTarget = {
-                            ...newConfig.utm_target,
-                          };
-                          newTarget.label = e.target.value;
-                          newConfig.utm_target = newTarget;
-                          return newConfig;
-                        });
+                        setFieldValue(e, 'utm_target');
                       }}
                     />
                     <Form.Check
@@ -508,21 +466,22 @@ export default function ConfigEditor({
                           required
                           pattern="/^(http[s]*)|(^ftp):\/\/ /"
                           onChange={(eventKey) => {
-                            createTargetPills(eventKey);
+                            addPill(eventKey, 'utm_target');
                           }}
                         />
-                        {/* <Form.Control.Feedback type="invalid">
-                          Invalid URL! Please use a complete URL with http or
-                          https.
-                        </Form.Control.Feedback> */}
                         <br />
-                        <div id="utm_bases-values">{basePills}</div>
+                        <PillArea
+                          pills={config.utm_bases.value}
+                          type="utm_target"
+                          callback={deletePillValue}
+                        />
                       </Form.Group>
                     )}
                   </Form.Group>
                 </Form>
               </Accordion.Body>
             </Accordion.Item>
+            {/* UTM Source */}
             <Accordion.Item eventKey="1">
               <Accordion.Header>
                 <strong>utm_source</strong>
@@ -543,13 +502,7 @@ export default function ConfigEditor({
                         : `${config.utm_source.label}`
                     }
                     onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newSource = { ...newConfig.utm_source };
-                        newSource.label = e.target.value;
-                        newConfig.utm_source = newSource;
-                        return newConfig;
-                      });
+                      setFieldValue(e, 'utm_source');
                     }}
                   />
                   <Form.Check
@@ -628,7 +581,132 @@ export default function ConfigEditor({
                 </Form.Group>
               </Accordion.Body>
             </Accordion.Item>
+            {/* UTM Medium */}
             <Accordion.Item eventKey="2">
+              <Accordion.Header>
+                <strong>utm_medium</strong>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Form.Group>
+                  <Form.Label>
+                    <strong>Label</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="utm_medium-label"
+                    // key="utm_medium-label"
+                    placeholder="Enter utm_medium field label"
+                    value={
+                      config.utm_medium.showName
+                        ? `${config.utm_medium.label} (utm_medium)`
+                        : `${config.utm_medium.label}`
+                    }
+                    onChange={(e) => {
+                      setFieldValue(e, 'utm_medium');
+                    }}
+                  />
+                  <Form.Check
+                    type="checkbox"
+                    // key="show-utm_medium"
+                    id="show-utm-medium"
+                    label="Show 'utm_medium' in Field Label?"
+                    checked={config.utm_medium.showName}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newMedium = { ...newConfig.utm_medium };
+                        newMedium.showName = e.target.checked;
+                        newConfig.utm_medium = newMedium;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>ToolTip Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_medium-tooltip"
+                    id="utm_medium-tooltip"
+                    placeholder="Enter utm_medium field tooltip"
+                    value={config.utm_medium.tooltip}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newMedium = { ...newConfig.utm_medium };
+                        newMedium.tooltip = e.target.value;
+                        newConfig.utm_medium = newMedium;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>ARIA (Accessibility) Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_medium-aria"
+                    id="utm_medium-aria"
+                    placeholder="Enter utm_medium field ARIA (Accessibility) label"
+                    value={config.utm_medium.ariaLabel}
+                    required
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newMedium = { ...newConfig.utm_medium };
+                        newMedium.ariaLabel = e.target.value;
+                        newConfig.utm_medium = newMedium;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>Error Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_medium-error"
+                    id="utm_medium-error"
+                    placeholder="Enter utm_medium field error mesage"
+                    value={config.utm_medium.error}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newMedium = { ...newConfig.utm_medium };
+                        newMedium.error = e.target.value;
+                        newConfig.utm_medium = newMedium;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>Medium Values</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_medium-values"
+                    placeholder="Enter comma-separated list of values to use"
+                    value={mediumVal}
+                    required
+                    id="utm_medium-values"
+                    onChange={(eventKey) => {
+                      addPill(eventKey, 'utm_medium');
+                    }}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    You must provide at least one value.
+                  </Form.Control.Feedback>
+                  <br />
+                  <PillArea
+                    pills={config.utm_medium.value}
+                    type="utm_medium"
+                    callback={deletePillValue}
+                  />
+                </Form.Group>
+              </Accordion.Body>
+            </Accordion.Item>
+            {/* UTM Campaign */}
+            <Accordion.Item eventKey="3">
               <Accordion.Header>
                 <strong>utm_campaign</strong>
               </Accordion.Header>
@@ -648,15 +726,7 @@ export default function ConfigEditor({
                         : `${config.utm_campaign.label}`
                     }
                     onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newCampaign = {
-                          ...newConfig.utm_campaign,
-                        };
-                        newCampaign.label = e.target.value;
-                        newConfig.utm_campaign = newCampaign;
-                        return newConfig;
-                      });
+                      setFieldValue(e, 'utm_campaign');
                     }}
                   />
                   <Form.Check
@@ -747,7 +817,270 @@ export default function ConfigEditor({
                 </Form.Group>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="3">
+            {/* UTM Team */}
+            <Accordion.Item eventKey="4">
+              <Accordion.Header>
+                <strong>team_name</strong>
+              </Accordion.Header>
+              <Accordion.Body id="team_name">
+                <Form.Group>
+                  <Form.Label>
+                    <strong>Label</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="team_name-label"
+                    placeholder="Enter team_name field label"
+                    value={
+                      config.team_name.showName
+                        ? `${config.team_name.label} (team_name)`
+                        : `${config.team_name.label}`
+                    }
+                    onChange={(e) => {
+                      setFieldValue(e, 'team_name');
+                    }}
+                  />
+                  <Form.Check
+                    type="checkbox"
+                    id="team_name-show"
+                    // key="show-utm_term"
+                    label="Show 'team_name' in Field Label?"
+                    checked={config.team_name.showName}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.team_name };
+                        newTeam.showName = e.target.checked;
+                        newConfig.team_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>ToolTip Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_term_tooltip"
+                    id="team_name-tooltip"
+                    placeholder="Enter team_name field tooltip"
+                    value={config.team_name.tooltip}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.team_name };
+                        newTeam.tooltip = e.target.value;
+                        newConfig.team_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>ARIA (Accessibility) Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="team_name-aria"
+                    placeholder="Enter team_name field ARIA (Accessibility) label"
+                    value={config.team_name.ariaLabel}
+                    required
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.team_name };
+                        newTeam.ariaLabel = e.target.value;
+                        newConfig.team_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>Error Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="team_name-error"
+                    placeholder="Enter team_name field error mesage"
+                    value={config.team_name.error}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.team_name };
+                        newTeam.error = e.target.value;
+                        newConfig.team_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>Teams</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_term_terms"
+                    placeholder="Enter comma-separated list of teams to use"
+                    value={teamVal}
+                    required
+                    id="team_name-values"
+                    onChange={(eventKey) => {
+                      addPill(eventKey, 'team_name');
+                    }}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    You must provide at least one term.
+                  </Form.Control.Feedback>
+                  <br />
+                  <PillArea
+                    pills={config.team_name.value}
+                    type="team_name"
+                    callback={deletePillValue}
+                  />
+                </Form.Group>
+              </Accordion.Body>
+            </Accordion.Item>
+            {/* UTM Region */}
+            <Accordion.Item eventKey="5x">
+              <Accordion.Header>
+                <strong>region_name</strong>
+              </Accordion.Header>
+              <Accordion.Body id="region_name">
+                <Form.Group>
+                  <Form.Label>
+                    <strong>Label</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="region_name-label"
+                    placeholder="Enter region_name field label"
+                    value={
+                      config.region_name.showName
+                        ? `${config.region_name.label} (region_name)`
+                        : `${config.region_name.label}`
+                    }
+                    onChange={(e) => {
+                      setFieldValue(e, 'region_name');
+                    }}
+                  />
+                  <Form.Check
+                    type="checkbox"
+                    id="region_name-show"
+                    label="Show 'region_name' in Field Label?"
+                    checked={config.region_name.showName}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.region_name };
+                        newTeam.showName = e.target.checked;
+                        newConfig.region_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>ToolTip Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="region_name-tooltip"
+                    placeholder="Enter region_name field tooltip"
+                    value={config.region_name.tooltip}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.region_name };
+                        newTeam.tooltip = e.target.value;
+                        newConfig.region_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>ARIA (Accessibility) Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="region_name-aria"
+                    placeholder="Enter region_name field ARIA (Accessibility) label"
+                    value={config.region_name.ariaLabel}
+                    required
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.region_name };
+                        newTeam.ariaLabel = e.target.value;
+                        newConfig.region_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>Error Text</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id="region_name-error"
+                    placeholder="Enter region_name field error mesage"
+                    value={config.region_name.error}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        const newTeam = { ...newConfig.region_name };
+                        newTeam.error = e.target.value;
+                        newConfig.region_name = newTeam;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                  <Form.Label>
+                    <strong>Regions</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    // key="utm_term_terms"
+                    placeholder="Enter comma-separated list of regions to use"
+                    value={regionVal}
+                    required
+                    id="region_name-values"
+                    onChange={(eventKey) => {
+                      addPill(eventKey, 'region_name');
+                    }}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    You must provide at least one region.
+                  </Form.Control.Feedback>
+                  <br />
+                  <PillArea
+                    pills={config.region_name.value}
+                    type="region_name"
+                    callback={deletePillValue}
+                  />
+                </Form.Group>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="6">
+              <Accordion.Header>
+                <strong>show_country</strong>
+              </Accordion.Header>
+              <Accordion.Body id="show_country">
+                <Form.Group>
+                  <Form.Check
+                    type="checkbox"
+                    id="show_country-show"
+                    label="Show Country Selector?"
+                    checked={config.show_country}
+                    onChange={(e) => {
+                      setConfig((prevConfig) => {
+                        const newConfig = { ...prevConfig };
+                        newConfig.show_country = e.target.checked;
+                        return newConfig;
+                      });
+                    }}
+                  />
+                </Form.Group>
+              </Accordion.Body>
+            </Accordion.Item>
+            {/* UTM Term */}
+            {/* <Accordion.Item eventKey="5">
               <Accordion.Header>
                 <strong>utm_term</strong>
               </Accordion.Header>
@@ -758,7 +1091,6 @@ export default function ConfigEditor({
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    // key="utm_term_label"
                     id="utm_term-label"
                     placeholder="Enter utm_term field label"
                     value={
@@ -767,19 +1099,12 @@ export default function ConfigEditor({
                         : `${config.utm_term.label}`
                     }
                     onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newTerm = { ...newConfig.utm_term };
-                        newTerm.label = e.target.value;
-                        newConfig.utm_term = newTerm;
-                        return newConfig;
-                      });
+                      setFieldValue(e, 'utm_term');
                     }}
                   />
                   <Form.Check
                     type="checkbox"
                     id="utm_term-show"
-                    // key="show-utm_term"
                     label="Show 'utm_term' in Field Label?"
                     checked={config.utm_term.showName}
                     onChange={(e) => {
@@ -797,7 +1122,6 @@ export default function ConfigEditor({
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    // key="utm_term_tooltip"
                     id="utm_term-tooltip"
                     placeholder="Enter utm_term field tooltip"
                     value={config.utm_term.tooltip}
@@ -816,7 +1140,6 @@ export default function ConfigEditor({
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    // key="utm_term_aria"
                     id="utm_term-aria"
                     placeholder="Enter utm_term field ARIA (Accessibility) label"
                     value={config.utm_term.ariaLabel}
@@ -836,7 +1159,6 @@ export default function ConfigEditor({
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    // key="utm_term_error"
                     id="utm_term-error"
                     placeholder="Enter utm_term field error mesage"
                     value={config.utm_term.error}
@@ -855,150 +1177,26 @@ export default function ConfigEditor({
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    // key="utm_term_terms"
                     placeholder="Enter comma-separated list of terms to use"
                     value={termVal}
                     required
                     id="utm_term-values"
                     onChange={(eventKey) => {
-                      createTermPills(eventKey);
+                      addPill(eventKey, 'utm_term');
                     }}
                   />
                   <Form.Control.Feedback type="invalid">
                     You must provide at least one term.
                   </Form.Control.Feedback>
                   <br />
-                  <div id="utm_term-pills">{termPills}</div>
+                  <PillArea
+                    pills={config.utm_term.value}
+                    type="utm_term"
+                    callback={deletePillValue}
+                  />
                 </Form.Group>
               </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="4">
-              <Accordion.Header>
-                <strong>utm_medium</strong>
-              </Accordion.Header>
-              <Accordion.Body>
-                <Form.Group>
-                  <Form.Label>
-                    <strong>Label</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    id="utm_medium-label"
-                    // key="utm_medium-label"
-                    placeholder="Enter utm_medium field label"
-                    value={
-                      config.utm_medium.showName
-                        ? `${config.utm_medium.label} (utm_medium)`
-                        : `${config.utm_medium.label}`
-                    }
-                    onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newMedium = { ...newConfig.utm_medium };
-                        newMedium.label = e.target.value;
-                        newConfig.utm_medium = newMedium;
-                        return newConfig;
-                      });
-                    }}
-                  />
-                  <Form.Check
-                    type="checkbox"
-                    // key="show-utm_medium"
-                    id="show-utm-medium"
-                    label="Show 'utm_medium' in Field Label?"
-                    checked={config.utm_medium.showName}
-                    onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newMedium = { ...newConfig.utm_medium };
-                        newMedium.showName = e.target.checked;
-                        newConfig.utm_medium = newMedium;
-                        return newConfig;
-                      });
-                    }}
-                  />
-                  <Form.Label>
-                    <strong>ToolTip Text</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    // key="utm_medium-tooltip"
-                    id="utm_medium-tooltip"
-                    placeholder="Enter utm_medium field tooltip"
-                    value={config.utm_medium.tooltip}
-                    onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newMedium = { ...newConfig.utm_medium };
-                        newMedium.tooltip = e.target.value;
-                        newConfig.utm_medium = newMedium;
-                        return newConfig;
-                      });
-                    }}
-                  />
-                  <Form.Label>
-                    <strong>ARIA (Accessibility) Text</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    // key="utm_medium-aria"
-                    id="utm_medium-aria"
-                    placeholder="Enter utm_medium field ARIA (Accessibility) label"
-                    value={config.utm_medium.ariaLabel}
-                    required
-                    onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newMedium = { ...newConfig.utm_medium };
-                        newMedium.ariaLabel = e.target.value;
-                        newConfig.utm_medium = newMedium;
-                        return newConfig;
-                      });
-                    }}
-                  />
-                  <Form.Label>
-                    <strong>Error Text</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    // key="utm_medium-error"
-                    id="utm_medium-error"
-                    placeholder="Enter utm_medium field error mesage"
-                    value={config.utm_medium.error}
-                    onChange={(e) => {
-                      setConfig((prevConfig) => {
-                        const newConfig = { ...prevConfig };
-                        const newMedium = { ...newConfig.utm_medium };
-                        newMedium.error = e.target.value;
-                        newConfig.utm_medium = newMedium;
-                        return newConfig;
-                      });
-                    }}
-                  />
-                  <Form.Label>
-                    <strong>Medium Values</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    // key="utm_medium-values"
-                    placeholder="Enter comma-separated list of values to use"
-                    value={mediumVal}
-                    required
-                    id="utm_medium-values"
-                    onChange={(eventKey) => {
-                      createMediumPills(eventKey);
-                    }}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    You must provide at least one value.
-                  </Form.Control.Feedback>
-                  <br />
-                  <div key="utm_medium-pills" id="utm_medium-pills">
-                    {mediumPills}
-                  </div>
-                </Form.Group>
-              </Accordion.Body>
-            </Accordion.Item>
+            </Accordion.Item> */}
           </Accordion>
         </Modal.Body>
         <Modal.Footer>

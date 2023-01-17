@@ -30,25 +30,20 @@ import icon from '../../../../assets/icons/stree.png';
 export default function Pill({
   id,
   value,
-  Ptype,
+  type,
   callback,
 }: {
   id: string;
   value: string;
-  Ptype: string;
-  callback: (id: string, value: string) => void;
+  type: string;
+  callback: (value: string, type: string) => void;
 }): JSX.Element {
   const [myValue, setMyValue] = useState(value);
 
   const removeMe = (event: Event) => {
-    console.log(event);
     if (event.target) {
       event.stopPropagation();
-      const parent = event.target.parentNode;
-      const pp = parent.parentNode;
-      console.log(myValue);
-      pp.removeChild(parent);
-      callback(Ptype, myValue);
+      callback(myValue, type);
     }
   };
   return (
@@ -56,7 +51,6 @@ export default function Pill({
       type="button"
       id={id}
       key={`${id}-button`}
-      img={icon}
       className="pill"
       style={{ cursor: 'default' }}
     >
@@ -73,3 +67,10 @@ export default function Pill({
     </button>
   );
 }
+
+Pill.propTypes = {
+  id: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  callback: PropTypes.func.isRequired,
+};

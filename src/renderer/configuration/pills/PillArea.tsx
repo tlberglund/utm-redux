@@ -30,18 +30,25 @@ export default function PillArea({
 }: {
   pills: string[];
   type: string;
-  callback: (props: { id: string; link: string }) => void;
+  callback: (value: string, type: string) => void;
 }): JSX.Element {
+  const removePill = (id: string) => {
+    callback(id, type);
+  };
+
   return (
     <div className="pillArea" key={`${type}-pillArea`}>
-      {pills.map((pill) => (
-        <Pill
-          // key={pill.id}
-          id={pill.id}
-          value={pill.value}
-          callback={callback}
-        />
-      ))}
+      {pills.map((pill, _id) => {
+        return (
+          <Pill
+            id={`${pill}-${type}`}
+            key={`${pill}-${type}`}
+            type={type}
+            value={pill}
+            callback={removePill}
+          />
+        );
+      })}
     </div>
   );
 }

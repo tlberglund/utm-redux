@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 
 export type Channels = 'utm-builder';
 
@@ -33,6 +33,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   saveConfig: (event: typeof event, key: string) => {
     return ipcRenderer.invoke('save-config', key);
+  },
+  checkPass: (event: typeof event) => {
+    return ipcRenderer.invoke('check-passwd', event);
   },
   homePath: () => ipcRenderer.invoke('home-path'),
 });

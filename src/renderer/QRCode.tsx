@@ -36,13 +36,14 @@ import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
 
 import icon from '../../assets/images/startree_logo-mark_fill-lightning-4.png';
 
-export default function QCode({ link, ext }: { link: string; ext: string }) {
+export default function QCode({ link, ext, qrOnly }: { link: string; ext: string, qrOnly: boolean }) {
   const [fileExt, setFileExt] = useState<FileExtension>('png');
   const [dataLink, setDataLink] = useState<string>('https://example.com/');
   const [copied, setCopied] = useState<boolean>(false);
   const [qrCode, setQRCode] = useState<string>(
-    'https://github.com/gcoro/react-qrcode-logo'
+    'https://example.com/'
   );
+  const [qrState, setQrState] = useState<boolean>(false);
   const ref = useRef(null);
 
   const onExtensionChange = (event: Event) => {
@@ -62,11 +63,6 @@ export default function QCode({ link, ext }: { link: string; ext: string }) {
     a.download = `qrcode.${fileExt}`;
     a.click();
   };
-  // qrCode
-  //   .download({
-  //     extension: fileExt,
-  //   })
-  //   .catch((err) => console.log('Copy Error: ', err));
 
   // Copy link to the clipboard and change the icon to a checkmark
   function copyMe(): void {
@@ -78,24 +74,26 @@ export default function QCode({ link, ext }: { link: string; ext: string }) {
       .catch((err) => console.error('Error: ', err));
   }
 
-  useEffect(() => {
-    setDataLink(link);
-    setQRCode(link);
-  }, []);
+  // useEffect(() => {
+  //   setDataLink(link);
+  //   setQRCode(link);
+  // }, [link]);
 
   useEffect(() => {
     setDataLink(link);
     setQRCode(link);
-    // qrCode.update({
-    //   data: link,
-    // });
     setCopied(false);
   }, [link]);
+
+  useEffect(() => {
+    setQrState(qrOnly);
+  }, [qrOnly]);
 
   return (
     <div>
       <div className="alert-columns">
-        <div className="alert-column1">
+        {!qrState && (
+          <div className="alert-column1">
           {copied && (
             <OverlayTrigger
               delay={{ show: 250, hide: 400 }}
@@ -139,7 +137,11 @@ export default function QCode({ link, ext }: { link: string; ext: string }) {
               />
             </OverlayTrigger>
           )}
-        </div>
+
+        </div>)}
+        {qrState && (
+          <div className="alert-column1">
+            </div>)}
         <div className="alert-column2">
           <OverlayTrigger
             placement="auto"
@@ -147,13 +149,19 @@ export default function QCode({ link, ext }: { link: string; ext: string }) {
             rootClose
             overlay={
               <Tooltip id="alert-tooltip">
-                Click here to copy your QR Code!
+                {qrState ? 'This data is encoded in the QR Code' : 'Click here to copy your QR Code!' }
               </Tooltip>
             }
           >
+            {!qrState ? (
             <div onClick={copyMe} onKeyDown={copyMe} role="button" tabIndex={0}>
               <strong style={{ cursor: 'pointer' }} className="header-stuff">{link}</strong>
             </div>
+            ) : (
+              <div>
+                <strong className="header-stuff">{link}</strong>
+              </div>
+            )}
           </OverlayTrigger>
         </div>
         <div className="alert-column3">

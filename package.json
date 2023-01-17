@@ -1,5 +1,5 @@
 {
-  "description": "A Simple UTM Link Builder App",
+  "description": "A UTM Link Builder App",
   "keywords": [
     "electron",
     "react",
@@ -8,7 +8,7 @@
     "sass",
     "webpack",
     "hot",
-    "reload"
+    "reload",
     "utm"
   ],
   "homepage": "https://github.com/davidgs/utm-redux#readme",
@@ -104,16 +104,19 @@
   "dependencies": {
     "axios": "^1.1.3",
     "bootstrap": "^5.2.2",
+    "country-dropdown-with-flags-for-react": "^1.1.4",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
     "electron-updater": "^5.2.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
+    "react-bootstrap-country-select": "^1.0.0",
     "react-bootstrap-icons": "^1.9.1",
     "react-dom": "^18.2.0",
     "react-qrcode-logo": "^2.8.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "sha512-es": "^1.8.2"
   },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
@@ -139,7 +142,7 @@
     "css-minimizer-webpack-plugin": "^4.0.0",
     "detect-port": "^1.3.0",
     "electron": "^20.0.2",
-    "electron-builder": "^22.10.3",
+    "electron-builder": "^23.0.2",
     "electron-devtools-installer": "^3.2.0",
     "electron-notarize": "^1.2.1",
     "electron-rebuild": "^3.2.9",

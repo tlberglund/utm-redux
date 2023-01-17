@@ -35,14 +35,12 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import Store from 'electron-store';
-import { UtmObj, UtmParams, defaultUTMParams } from '../renderer/types';
-import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { UtmParams, defaultUTMParams } from '../renderer/types.tsx';
+import MenuBuilder from './menu.ts';
+import { resolveHtmlPath } from './util.ts';
 
-const nodeFs = require('fs');
 const electronApp = require('electron').app;
 
-const appUserDataPath = electronApp.getPath('userData');
 const home = process.env.HOME || process.env.USERPROFILE;
 const store = new Store();
 const defaultConfig: UtmParams = defaultUTMParams;
@@ -60,7 +58,6 @@ let mainWindow: BrowserWindow | null = null;
 /*
  * return the home path, if it's ever needed
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ipcMain.handle('home-path', () => {
   return home;
 });
@@ -82,6 +79,19 @@ ipcMain.handle('save-config', (event: Event, config: string) => {
  */
 ipcMain.handle('get-config', () => {
   return JSON.stringify(store.get('utm-config', defaultConfig));
+});
+
+/*
+ * get the config from the store
+ * @param event - Just send null, but it's required?
+ */
+ipcMain.handle('check-passwd', () => {
+  return JSON.stringify(
+    store.get(
+      'admin-passwd',
+      '27c8b224d0446d0fd76dc67c6f783f69e6b29cd8f43536306b7b8fad8266e82109afde3d4eb19b576f29bbc74807f06ba2ba5d0e7394b874df4dc8edcb8d8dea'
+    )
+  );
 });
 
 /*
@@ -137,7 +147,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728,
+    height: 828,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged

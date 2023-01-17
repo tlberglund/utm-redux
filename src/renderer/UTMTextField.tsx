@@ -36,10 +36,12 @@ function UTMTextField({
   valueChanged,
   targetType,
   enableMe,
+  qrOnly,
 }: {
   valueChanged: (value: string) => void;
   targetType: string;
   enableMe: boolean;
+  qrOnly: boolean;
 }): JSX.Element {
   const [ariaLabel, setAriaLabel] = useState<string>('');
   const [label, setLabel] = useState<string>('');
@@ -49,6 +51,7 @@ function UTMTextField({
   const [validated, setValidated] = useState<boolean>(false);
   const [enableChoice, setEnableChoice] = useState<boolean>(true);
   const [tType, setTType] = useState<string>(targetType);
+  const [qrOnlyState, setQrOnlyState] = useState<boolean>(qrOnly);
   const ref = useRef(null);
 
   // get the configuration
@@ -62,7 +65,6 @@ function UTMTextField({
         setErrorLabel(c.error);
         setShowName(c.showName);
         setTooltip(c.tooltip);
-        console.log('Tooltip: ', c.tooltip);
         return '';
       })
       .catch((error: unknown) => {
@@ -73,6 +75,10 @@ function UTMTextField({
   useEffect(() => {
     setEnableChoice(enableMe);
   }, [enableMe]);
+
+  useEffect(() => {
+    setQrOnlyState(qrOnly);
+  }, [qrOnly]);
 
   return (
     <>
@@ -87,10 +93,14 @@ function UTMTextField({
             id={`${targetType}-target`}
             aria-label={ariaLabel}
             aria-describedby={tooltip}
-            onBlur={(eventKey) => {
-              valueChanged(
-                eventKey.target.value.replace(/ /g, '_').toLowerCase()
-              );
+            onChange={(eventKey) => {
+              if(!qrOnlyState){
+                valueChanged(
+                  eventKey.target.value.replace(/ /g, '-').toLowerCase()
+                );
+              } else {
+                valueChanged(eventKey.target.value);
+              }
             }}
           />
         </FloatingLabel>

@@ -23,6 +23,7 @@
 import './hyde.css';
 import { useState, useEffect } from 'react';
 import { Form, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import PasswordForm from './configuration/PasswordForm';
 import StarTree from '../../assets/images/ST_Logo_WhiteYellow.svg';
 
 export default function SideNav({
@@ -33,10 +34,15 @@ export default function SideNav({
   callback: (value: boolean) => void;
 }) {
   const [enableConfig, setEnableConfig] = useState(showConfig);
+  const [showPasswd, setShowPasswd] = useState(false);
 
   useEffect(() => {
     setEnableConfig(showConfig);
   }, [showConfig]);
+
+  const passwdVisible = (show: boolean) => {
+    setShowPasswd(show);
+  };
 
   return (
     // eslint-disable-next-line react/jsx-filename-extension
@@ -91,7 +97,8 @@ export default function SideNav({
                     aria-label="Edit Configuration"
                     checked={enableConfig}
                     onChange={(e) => {
-                      callback(e.target.checked);
+                      passwdVisible(e.target.checked);
+                      // callback(e.target.checked);
                     }}
                   />
                 </OverlayTrigger>
@@ -100,6 +107,13 @@ export default function SideNav({
           </Form>
         </div>
       </aside>
+      <PasswordForm
+        show={showPasswd}
+        callback={(value: boolean) => {
+          callback(value);
+          setShowPasswd(false);
+        }}
+      />
     </div>
   );
 }

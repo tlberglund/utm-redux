@@ -20,8 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-// import QRCodeStyling from 'styled-qr-code';
-import icon from '../../assets/images/startree_logo-mark_fill-lightning.png';
 
 export type UtmObj = {
   showName: boolean;
@@ -30,17 +28,6 @@ export type UtmObj = {
   tooltip: string;
   error: string;
   value: string[];
-};
-
-export type UtmParams = {
-  restrict_bases: boolean;
-  utm_bases: UtmObj;
-  utm_campaign: UtmObj;
-  utm_target: UtmObj;
-  utm_term: UtmObj;
-  utm_medium: UtmObj;
-  utm_source: UtmObj;
-  bitly_config: BitlyConfig;
 };
 
 export type BitlyConfig = {
@@ -52,6 +39,20 @@ export type BitlyConfig = {
   bitlyDomain: string;
   bitlyAddr: string;
   bitlyEnabled: boolean;
+};
+
+export type UtmParams = {
+  restrict_bases: boolean;
+  show_country: boolean;
+  utm_bases: UtmObj;
+  utm_campaign: UtmObj;
+  utm_target: UtmObj;
+  utm_term: UtmObj;
+  utm_medium: UtmObj;
+  utm_source: UtmObj;
+  team_name: UtmObj;
+  region_name: UtmObj;
+  bitly_config: BitlyConfig;
 };
 
 export const defaultBitlyConfig: BitlyConfig = {
@@ -74,6 +75,24 @@ export const defaultUTMBases = {
   value: ['https://foo.com/', 'https://bar.com/', 'https://Foo.Bar.com/'],
 };
 
+export const defaultUTMTeamName: UtmObj = {
+  showName: true,
+  label: 'Team Name',
+  tooltip: 'What is your team name?',
+  error: 'Please enter a valid team name',
+  ariaLabel: 'Team Name',
+  value: ['Internal Paid', 'External Paid', 'Social'],
+};
+
+export const defaultUTMRegionName: UtmObj = {
+  showName: true,
+  label: 'Region Name',
+  tooltip: 'What is your region name?',
+  error: 'Please enter a valid region name',
+  ariaLabel: 'Region Name',
+  value: ['North America', 'APAC', 'EMEA', 'Global'],
+};
+
 export const defaultUTMTarget: UtmObj = {
   showName: true,
   label: 'Link Target',
@@ -85,29 +104,19 @@ export const defaultUTMTarget: UtmObj = {
 
 export const defaultUTMTerm: UtmObj = {
   showName: true,
-  label: 'Division/Group',
-  tooltip: 'What division/Group are you in?',
-  error: 'Please choose a valid division/group',
-  ariaLabel: 'What division/Group are you in?',
+  label: 'Source',
+  tooltip: `What's the Campaign Source?`,
+  error: 'Please choose a valid source',
+  ariaLabel: `What's the Campaign Source?`,
   value: [
-    'DevRel',
-    'Marketing',
-    'Product',
-    'Engineering',
-    'CTO',
-    'CEO',
-    'Sales',
-    'Other',
-  ],
-};
-
-export const defaultUTMMedium: UtmObj = {
-  showName: true,
-  label: 'Referral Type',
-  tooltip: 'What kind of referral link is this?',
-  error: 'Please choose a valid referral type',
-  ariaLabel: 'Referral Type',
-  value: [
+    'Adwords',
+    'Angel',
+    'Baidu',
+    'Bing',
+    'Duck Duck Go',
+    'Google',
+    'Otta',
+    'Tech Meme',
     'Blog Post',
     'Twitter',
     'LinkedIn',
@@ -127,6 +136,37 @@ export const defaultUTMMedium: UtmObj = {
   ],
 };
 
+export const defaultUTMMedium: UtmObj = {
+  showName: true,
+  label: 'Referral Type',
+  tooltip: 'What kind of referral link is this?',
+  error: 'Please choose a valid referral type',
+  ariaLabel: 'Referral Type',
+  value: [
+    'CPC',
+    'Direct',
+    'Display',
+    'Email',
+    'Organic',
+    'Paid Search',
+    'QR',
+    'Retargeting',
+    'Social',
+    'Referral',
+    'Paid Social',
+    'Event',
+    'DevRel',
+    // 'DevRel',
+    // 'Marketing',
+    // 'Product',
+    // 'Engineering',
+    // 'CTO',
+    // 'CEO',
+    // 'Sales',
+    // 'Other',
+  ],
+};
+
 export const defaultUTMSource: UtmObj = {
   showName: true,
   label: 'Referral Source',
@@ -138,15 +178,16 @@ export const defaultUTMSource: UtmObj = {
 
 export const defaultUTMCampaign: UtmObj = {
   showName: true,
-  label: 'Full Name',
-  tooltip: 'Enter your full first and last names?',
-  error: 'You need to enter your full first and last names please.',
-  ariaLabel: 'Enter your Full Name',
+  label: 'Campaign',
+  tooltip: 'Enter a campaign name',
+  error: 'Please enter a valid campaign name',
+  ariaLabel: 'Campaign Name',
   value: [],
 };
 
 export const defaultUTMParams: UtmParams = {
-  restrict_bases: true,
+  restrict_bases: false,
+  show_country: true,
   utm_bases: defaultUTMBases,
   utm_campaign: defaultUTMCampaign,
   utm_target: defaultUTMTarget,
@@ -154,6 +195,8 @@ export const defaultUTMParams: UtmParams = {
   utm_medium: defaultUTMMedium,
   utm_source: defaultUTMSource,
   bitly_config: defaultBitlyConfig,
+  team_name: defaultUTMTeamName,
+  region_name: defaultUTMRegionName,
 };
 
 // export const defaultQRStyle = new QRCodeStyling({

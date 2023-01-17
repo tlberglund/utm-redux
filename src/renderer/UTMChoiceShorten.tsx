@@ -88,9 +88,15 @@ export default function UTMChoice({
           id={targetType}
           disabled={!enableChoice}
           onChange={(eventKey) => {
-            valueChanged(
-              eventKey.target.value.replace(/ /g, '-').toLowerCase()
-            );
+              const v = eventKey.target.value;
+              if (v === 'Choose one ...') {
+                return;
+              }
+              const matches = v?.match(/\b(\w)/g)?.join('').toLowerCase();
+              if (matches) {
+                valueChanged(matches);
+              }
+              // eventKey.target.value.replace(/ /g, '_').toLowerCase()
           }}
         >
           <option defaultValue>

@@ -28,13 +28,13 @@ export default function MainHeader() {
     <main className="content">
       <div className="posts">
         <article className="post">
-          <h1 className="post-title header-stuff">
-            Content Referral Link Generator
+          <h1 className="post-title header-stuff" style={{textAlign: 'center'}}>
+            Referral Link & QR Code Generator
           </h1>
-          <h4 className="header-stuff">
+          <h4 className="header-stuff" style={{textAlign: 'center'}}>
             Posting a link back to a web resource?
           </h4>
-          <h4 className="header-stuff">
+          <h4 className="header-stuff" style={{textAlign: 'center'}}>
             Create a trackable link and make it count!
           </h4>
         </article>
