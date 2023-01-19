@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import { FloatingLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -48,11 +48,18 @@ export default function UTMChoice({
   const [validated, setValidated] = useState<boolean>(false);
   const [enableChoice, setEnableChoice] = useState<boolean>(true);
   const [choices, setChoices] = useState<JSX.Element[]>([]);
+  const [displayValue, setDisplayValue] = useState<string>('');
   const ref = useRef(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function getGroups(vals: string[]): JSX.Element[] {
     const groups: JSX.Element[] = [];
+     const def = enableChoice ? 'Choose one ...' : 'Choose a Term first';
+     groups.push(
+       <option key={`${targetType}-default`} value="">
+         {def}
+       </option>
+     );
     vals.forEach((val) => {
       groups.push(
         <option key={`${targetType}-${val}`} value={val}>
@@ -62,6 +69,17 @@ export default function UTMChoice({
     });
     return groups;
   }
+
+  const selectedValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target?.value === 'Choose one ...') {
+      return;
+    }
+    if (e.target?.value === 'Choose a Term first') {
+      return;
+    }
+    setDisplayValue(e.target?.value);
+  };
+
 
   // get the configuration
   useEffect(() => {
@@ -90,18 +108,20 @@ export default function UTMChoice({
           onChange={(eventKey) => {
               const v = eventKey.target.value;
               if (v === 'Choose one ...') {
+                valueChanged('');
                 return;
               }
               const matches = v?.match(/\b(\w)/g)?.join('').toLowerCase();
               if (matches) {
                 valueChanged(matches);
+              } else {
+                valueChanged('');
               }
+              selectedValue(eventKey);
               // eventKey.target.value.replace(/ /g, '_').toLowerCase()
           }}
+          value={displayValue}
         >
-          <option defaultValue>
-            {enableChoice ? 'Choose one ...' : 'Choose a Term first'}
-          </option>
           {choices}
         </Form.Select>
       </FloatingLabel>

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, MouseEventHandler, SyntheticEvent } from 'react';
 import PropTypes from 'prop-types';
 import { QRCode } from 'react-qrcode-logo';
 import {
@@ -37,7 +37,7 @@ import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
 import icon from '../../assets/images/startree_logo-mark_fill-lightning-4.png';
 
 export default function QCode({ link, ext, qrOnly }: { link: string; ext: string, qrOnly: boolean }) {
-  const [fileExt, setFileExt] = useState<FileExtension>('png');
+  const [fileExt, setFileExt] = useState<string>('png');
   const [dataLink, setDataLink] = useState<string>('https://example.com/');
   const [copied, setCopied] = useState<boolean>(false);
   const [qrCode, setQRCode] = useState<string>(
@@ -46,13 +46,14 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
   const [qrState, setQrState] = useState<boolean>(false);
   const ref = useRef(null);
 
-  const onExtensionChange = (event: Event) => {
+  const onExtensionChange = (event: SyntheticEvent) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    setFileExt(event?.target?.id);
+    let target = event.target as HTMLInputElement;
+    setFileExt(target?.id);
   };
 
   const onDownloadClick = () => {
-    const canvas = document.getElementById('react-qrcode-logo');
+    const canvas = document.getElementById('react-qrcode-logo') as HTMLCanvasElement;
     const url = canvas?.toDataURL('image/jpg', 0.8);
 
     // remove Base64 stuff from the Image
@@ -73,11 +74,6 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
       // eslint-disable-next-line no-console
       .catch((err) => console.error('Error: ', err));
   }
-
-  // useEffect(() => {
-  //   setDataLink(link);
-  //   setQRCode(link);
-  // }, [link]);
 
   useEffect(() => {
     setDataLink(link);

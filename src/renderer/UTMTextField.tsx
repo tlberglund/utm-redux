@@ -27,7 +27,6 @@ import {
   FormControl,
   OverlayTrigger,
   Tooltip,
-  InputGroup,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { UtmObj } from './types';
@@ -57,8 +56,8 @@ function UTMTextField({
   // get the configuration
   useEffect(() => {
     window.electronAPI
-      .getParams(null, targetType)
-      .then((response: JSON) => {
+      .getParams(targetType)
+      .then((response: string) => {
         const c: UtmObj = JSON.parse(response);
         setAriaLabel(c.ariaLabel);
         setLabel(c.label);

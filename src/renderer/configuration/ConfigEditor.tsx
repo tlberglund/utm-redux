@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 /* eslint-disable no-case-declarations */
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent, SyntheticEvent } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Accordion, Modal } from 'react-bootstrap';
@@ -51,8 +51,8 @@ export default function ConfigEditor({
   // get the configuration
   useEffect(() => {
     window.electronAPI
-      .getConfig(null)
-      .then((response: JSON) => {
+      .getConfig()
+      .then((response: string) => {
         const c: UtmParams = JSON.parse(response);
         setConfig(c);
         return '';
@@ -133,16 +133,18 @@ export default function ConfigEditor({
     }
   };
 
-  const addPill = (event: ChangeEvent, type: string) => {
+  const addPill = (event: SyntheticEvent, type: string) => {
+    const target = event.target as HTMLInputElement;
+
     switch (type) {
       case 'utm_target':
-        setBaseVal(event?.target?.value);
-        if (!event?.target?.value.includes(',')) {
+        setBaseVal(target?.value);
+        if (!target?.value.includes(',')) {
           return;
         }
         setBaseVal('');
         let newTar = config.utm_bases.value;
-        newTar.push(event?.target?.value?.replace(/,/g, ''));
+        newTar.push(target?.value?.replace(/,/g, ''));
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newBase = {
@@ -154,13 +156,13 @@ export default function ConfigEditor({
         });
         break;
       case 'utm_term':
-        setTermVal(event?.target?.value);
-        if (!event?.target?.value.includes(',')) {
+        setTermVal(target?.value);
+        if (!target?.value.includes(',')) {
           return;
         }
         setTermVal('');
         let newTrm = config.utm_term.value;
-        newTrm.push(event?.target?.value?.replace(/,/g, ''));
+        newTrm.push(target?.value?.replace(/,/g, ''));
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTerm = {
@@ -172,13 +174,13 @@ export default function ConfigEditor({
         });
         break;
       case 'team_name':
-        setTeamVal(event?.target?.value);
-        if (!event?.target?.value.includes(',')) {
+        setTeamVal(target?.value);
+        if (!target?.value.includes(',')) {
           return;
         }
         setTeamVal('');
         let newTm = config.team_name.value;
-        newTm.push(event?.target?.value?.replace(/,/g, ''));
+        newTm.push(target?.value?.replace(/,/g, ''));
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTeam = {
@@ -190,13 +192,13 @@ export default function ConfigEditor({
         });
         break;
       case 'team_name':
-        setTeamVal(event?.target?.value);
-        if (!event?.target?.value.includes(',')) {
+        setTeamVal(target?.value);
+        if (!target?.value.includes(',')) {
           return;
         }
         setTeamVal('');
         let newR = config.team_name.value;
-        newR.push(event?.target?.value?.replace(/,/g, ''));
+        newR.push(target?.value?.replace(/,/g, ''));
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTeam = {
@@ -208,13 +210,13 @@ export default function ConfigEditor({
         });
         break;
       case 'utm_medium':
-        setMediumVal(event?.target?.value);
-        if (!event?.target?.value.includes(',')) {
+        setMediumVal(target?.value);
+        if (!target?.value.includes(',')) {
           return;
         }
         setMediumVal('');
         let newMeds = config.utm_medium.value;
-        newMeds.push(event?.target?.value?.replace(/,/g, ''));
+        newMeds.push(target?.value?.replace(/,/g, ''));
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newMed = {
@@ -231,8 +233,10 @@ export default function ConfigEditor({
   };
 
   const setFieldValue = (event: ChangeEvent, type: string) => {
-    const ind = event?.target?.value.indexOf('(');
-    const nv = event?.target?.value.indexOf('(') > -1 ? event?.target?.value.substring(0, event?.target?.value.indexOf('(') -1).trim(' ') : event?.target?.value;
+    let target = event.target as HTMLInputElement;
+
+    const ind = target?.value.indexOf('(');
+    const nv = target?.value.indexOf('(') > -1 ? target?.value.substring(0, target?.value.indexOf('(') -1).trim() : target?.value;
     switch (type) {
       case 'utm_target':
         setConfig((prevConfig) => {
@@ -298,8 +302,8 @@ export default function ConfigEditor({
     callback(!show);
   }
   /* handle the save button */
-  const handleSave = (event: Event) => {
-    const form = event.currentTarget;
+  const handleSave = (event: SyntheticEvent) => {
+    const form = event.currentTarget as HTMLFormElement;
     if (form != null && form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
@@ -307,8 +311,8 @@ export default function ConfigEditor({
     setTargetValidated(true);
     const c = JSON.stringify(config);
     window.electronAPI
-      .saveConfig(null, c)
-      .then((response: JSON) => {
+      .saveConfig(c)
+      .then((response: string) => {
         callDone();
         return '';
       })

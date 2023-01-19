@@ -35,9 +35,9 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import Store from 'electron-store';
-import { UtmParams, defaultUTMParams } from '../renderer/types.tsx';
-import MenuBuilder from './menu.ts';
-import { resolveHtmlPath } from './util.ts';
+import { UtmParams, defaultUTMParams } from '../renderer/types';
+import MenuBuilder from './menu';
+import { resolveHtmlPath } from './util';
 
 const electronApp = require('electron').app;
 
@@ -54,13 +54,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-/*
- * return the home path, if it's ever needed
- */
-ipcMain.handle('home-path', () => {
-  return home;
-});
 
 /*
  * save the config to the store
@@ -99,11 +92,30 @@ ipcMain.handle('check-passwd', () => {
  * @param event - Just send null, but it's required?
  * @param pName - the name of the Configuration parameter to return
  */
-ipcMain.handle('get-params', (event: Event, pName: string) => {
+ipcMain.handle('get-params', (e: Event, key: string) => {
   const params: UtmParams = JSON.parse(
     JSON.stringify(store.get('utm-config', defaultConfig))
   );
-  return JSON.stringify(params[pName]);
+  switch (key) {
+    case 'utm_target':
+      return JSON.stringify(params.utm_target);
+    case 'utm_source':
+      return JSON.stringify(params.utm_source);
+    case 'utm_medium':
+      return JSON.stringify(params.utm_medium);
+    case 'utm_campaign':
+      return JSON.stringify(params.utm_campaign);
+    case 'utm_term':
+      return JSON.stringify(params.utm_term);
+    case 'team_name':
+      return JSON.stringify(params.team_name);
+    case 'region_name':
+      return JSON.stringify(params.region_name);
+    case 'bitly_config':
+      return JSON.stringify(params.bitly_config);
+    default:
+      return JSON.stringify(params);
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -134,7 +146,7 @@ const installExtensions = async () => {
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
-  }
+  }​
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -144,10 +156,22 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  const options = {
+    applicationName: 'UTM Builder',
+    applicationVersion: 'v1.6.4',
+    copyright: '© 2023',
+    version: 'b1023',
+    credits: 'David G. Simmons & Electron React Boilerplate',
+    authors: ['David G. Simmons'],
+    website: 'https://github.com/davidgs/utm-redux',
+    iconPath: getAssetPath('icon.png')
+  };
+  app.setAboutPanelOptions(options)
+  console.log(getAssetPath('icon.png'));
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 828,
+    height: 980,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
