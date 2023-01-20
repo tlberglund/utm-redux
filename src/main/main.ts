@@ -158,9 +158,9 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.4',
+    applicationVersion: 'v1.6.5',
     copyright: '© 2023',
-    version: 'b1023',
+    version: 'b1024',
     credits: 'David G. Simmons & Electron React Boilerplate',
     authors: ['David G. Simmons'],
     website: 'https://github.com/davidgs/utm-redux',
