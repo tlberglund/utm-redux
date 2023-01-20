@@ -25,6 +25,7 @@ import Form from 'react-bootstrap/Form';
 import { FloatingLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { UtmObj } from './types';
+import React from 'react';
 
 export default function UTMChoice({
   valueChanged,

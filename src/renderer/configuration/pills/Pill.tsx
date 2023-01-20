@@ -24,7 +24,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import icon from '../../../../assets/icons/stree.png';
 
 export default function Pill({
@@ -40,7 +40,7 @@ export default function Pill({
 }): JSX.Element {
   const [myValue, setMyValue] = useState(value);
 
-  const removeMe = (event: Event) => {
+  const removeMe = (event: SyntheticEvent) => {
     if (event.target) {
       event.stopPropagation();
       callback(myValue, type);

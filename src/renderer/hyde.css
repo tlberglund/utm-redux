@@ -395,6 +395,7 @@ a.sidebar-nav-item:focus {
   .aside-column {
     float: left;
     width: 25%;
+    max-width: 230px;
     margin-right: 10px;
   }
   .main-column {
@@ -402,6 +403,7 @@ a.sidebar-nav-item:focus {
     width: 75%;
     padding-left: 40px;
     margin-left: 10px;
+    margin-right: 10px;
   }
   /* Stops the float property from affecting content after the columns */
   .columns:after {
@@ -415,6 +417,7 @@ a.sidebar-nav-item:focus {
   .aside-column {
       float: left;
       width: 25%;
+      max-width: 230px;
       margin-right: 10px;
       padding-right: 10px;
     }
@@ -423,6 +426,7 @@ a.sidebar-nav-item:focus {
       float: right;
       width: 75%;
       margin-left: 10px;
+      margin-right: 10px;
     }
 
     /* Stops the float property from affecting content after the columns */
