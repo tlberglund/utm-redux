@@ -21,15 +21,27 @@
  * SOFTWARE.
  */
 import { contextBridge, ipcRenderer } from 'electron';
+import { UtmParams } from '../renderer/types';
 
 export type Channels = 'utm-builder';
-export type Events = 'get-config' | 'get-params' | 'save-config' | 'check-passwd';
+export type Events =
+  | 'get-config'
+  | 'get-params'
+  | 'save-config'
+  | 'check-passwd';
+
+export type electronAPI = {
+  getConfig: () => Promise<string>;
+  getParams: (key: string) => Promise<string>;
+  saveConfig: (key: string) => Promise<string>;
+  checkPass: () => Promise<string>;
+};
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getConfig: () => {
     return ipcRenderer.invoke('get-config');
   },
-  getParams: ( key: string) => {
+  getParams: (key: string) => {
     return ipcRenderer.invoke('get-params', key);
   },
   saveConfig: (key: string) => {
@@ -40,13 +52,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 });
 
-// Path: src/renderer/preload.ts
-// Compare this snippet from src/renderer/index.d.ts:
-// export {};
-//
-// declare global {
-//   interface Window {
-//     electronAPI: Promise<(response: string) => void >;
-//   }
-// }
+// Path: src/main/preload.ts
 
+declare global {
+  interface Window {
+    electronAPI: {
+      getConfig: () => Promise<string>;
+      getParams: (key: string) => Promise<string>;
+      saveConfig: (key: string) => Promise<string>;
+      checkPass: () => Promise<string>;
+    };
+  }
+}

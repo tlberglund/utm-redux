@@ -26,6 +26,7 @@ import { useState } from 'react';
 import MainHeader from './MainHeader';
 import SideNav from './SideNav';
 import LinkForm from './LinkForm';
+import React from 'react';
 
 export default function MainPage() {
   const [editConfig, setEditConfig] = useState(false);

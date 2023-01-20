@@ -20,11 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import React from 'react';
 import './hyde.css';
 import { useState, useEffect } from 'react';
 import { Form, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PasswordForm from './configuration/PasswordForm';
-import StarTree from '../../assets/images/ST_Logo_WhiteYellow.svg';
+import StarTree  from '../../assets/images/ST_Logo_WhiteYellow.svg';
 
 export default function SideNav({
   showConfig,
@@ -75,7 +76,6 @@ export default function SideNav({
                 Developer Relations
               </p>
             </div>
-            {/* <Credits /> */}
           </div>
           <nav>
             <ul className="sidebar-nav">
@@ -87,7 +87,7 @@ export default function SideNav({
               </li>
             </ul>
           </nav>
-          <p>&copy; David G. Simmons 2022</p>
+          <p>&copy; David G. Simmons 2023</p>
           <p>All rights reserved</p>
           <Form>
             <Row>

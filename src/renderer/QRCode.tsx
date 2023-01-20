@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { useEffect, useState, useRef, useCallback, MouseEventHandler, SyntheticEvent } from 'react';
+import { useEffect, useState, useRef, SyntheticEvent } from 'react';
 import PropTypes from 'prop-types';
 import { QRCode } from 'react-qrcode-logo';
 import {
@@ -33,8 +33,8 @@ import {
   Col,
 } from 'react-bootstrap';
 import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
-
 import icon from '../../assets/images/startree_logo-mark_fill-lightning-4.png';
+import React from 'react';
 
 export default function QCode({ link, ext, qrOnly }: { link: string; ext: string, qrOnly: boolean }) {
   const [fileExt, setFileExt] = useState<string>('png');
