@@ -34,6 +34,12 @@ declare global {
         once(channel: Channels, func: (...args: unknown[]) => void): void;
       };
     };
+    electronAPI: {
+      getConfig: () => Promise<string>;
+      getParams: (key: string) => Promise<string>;
+      saveConfig: (key: string) => Promise<string>;
+      checkPass: () => Promise<string>;
+    };
   }
 }
 

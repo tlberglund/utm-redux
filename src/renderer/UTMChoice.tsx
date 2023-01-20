@@ -48,11 +48,18 @@ export default function UTMChoice({
   const [validated, setValidated] = useState<boolean>(false);
   const [enableChoice, setEnableChoice] = useState<boolean>(true);
   const [choices, setChoices] = useState<JSX.Element[]>([]);
+  const [displayValue, setDisplayValue] = useState<string>('');
   const ref = useRef(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function getGroups(vals: string[]): JSX.Element[] {
     const groups: JSX.Element[] = [];
+     const def = enableChoice ? 'Choose one ...' : 'Choose a Term first';
+    groups.push(
+      <option key={`${targetType}-default`} value="">
+        {def}
+      </option>
+    );
     vals.forEach((val) => {
       groups.push(
         <option key={`${targetType}-${val}`} value={val}>
@@ -62,6 +69,18 @@ export default function UTMChoice({
     });
     return groups;
   }
+
+  const selectedValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target?.value === 'Choose one ...') {
+      valueChanged('');
+      return;
+    }
+    if (e.target?.value === 'Choose a Term first') {
+      valueChanged('');
+      return;
+    }
+    setDisplayValue(e.target?.value);
+  };
 
   // get the configuration
   useEffect(() => {
@@ -88,14 +107,21 @@ export default function UTMChoice({
           id={targetType}
           disabled={!enableChoice}
           onChange={(eventKey) => {
+            if(eventKey.target.value === 'Choose one ...') {
+              valueChanged('');
+              return;
+            }
+            if(eventKey.target.value === 'Choose a Term first') {
+              valueChanged('');
+              return;
+            }
             valueChanged(
               eventKey.target.value.replace(/ /g, '-').toLowerCase()
             );
+            selectedValue(eventKey);
           }}
+          value={displayValue}
         >
-          <option defaultValue>
-            {enableChoice ? 'Choose one ...' : 'Choose a Term first'}
-          </option>
           {choices}
         </Form.Select>
       </FloatingLabel>

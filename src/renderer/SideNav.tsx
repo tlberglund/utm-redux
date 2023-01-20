@@ -60,10 +60,22 @@ export default function SideNav({
         <div className="container sidebar-sticky">
           <div className="sidebar-about">
             <p className="lead">A Content Referral Link Generator</p>
-            <p className="lead">Brought to you by</p>
-            <p>
-              <a href="mailto:davidgs@davidgs.com">David G. Simmons</a>
-            </p>
+            <div>
+              <p className="lead">Brought to you by</p>
+              <p>
+                <a href="mailto:davidgs@davidgs.com">David G. Simmons</a> &{' '}
+                <br />
+                <a
+                  href="https://startree.ai/"
+                  target="_blank"
+                  rel="utm_builder noreferrer"
+                >
+                  StarTree
+                </a>{' '}
+                Developer Relations
+              </p>
+            </div>
+            {/* <Credits /> */}
           </div>
           <nav>
             <ul className="sidebar-nav">

@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { Form, Button, Modal, FloatingLabel, Row, Col } from 'react-bootstrap';
-import SHA512 from 'sha512-es';
+import jsSHA from 'jssha';
+
 
 const PasswordForm = ({
   show,
@@ -44,8 +45,8 @@ const PasswordForm = ({
 
   useEffect(() => {
     window.electronAPI
-      .checkPass(null)
-      .then((response: JSON) => {
+      .checkPass()
+      .then((response: string) => {
         const s = JSON.parse(response);
         setAdminPassword(s);
         return '';
@@ -55,9 +56,11 @@ const PasswordForm = ({
       });
   }, []);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    const hash = SHA512.hash(password);
+    const shaObj = new jsSHA("SHA-512", "TEXT");
+    shaObj.update(password);
+    const hash = shaObj.getHash("HEX");
     if (hash === adminPassword) {
       callback(true);
     } else {

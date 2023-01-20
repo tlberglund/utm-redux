@@ -37,20 +37,16 @@ export default function BitlyCheck({
 }): JSX.Element {
   const [ariaLabel, setAriaLabel] = useState('');
   const [label, setLabel] = useState('');
-  const [errorLabel, setErrorLabel] = useState('');
   const [tooltip, setTooltip] = useState('');
-  const [validated, setValidated] = useState(false);
-  const [tType, setTType] = useState(targetType);
 
   // get the configuration
   useEffect(() => {
     window.electronAPI
-      .getParams(null, targetType)
-      .then((response: JSON) => {
+      .getParams(targetType)
+      .then((response: string) => {
         const c: BitlyConfig = JSON.parse(response);
         setAriaLabel(c.ariaLabel);
         setLabel(c.label);
-        setErrorLabel(c.error);
         setTooltip(c.tooltip);
         return '';
       })
@@ -58,6 +54,7 @@ export default function BitlyCheck({
         console.log(`Error: ${error}`);
       });
   }, [targetType]);
+
   return (
     <OverlayTrigger
       placement="right"
@@ -65,8 +62,8 @@ export default function BitlyCheck({
     >
       <Form.Check
         type="switch"
-        id="custom-switch"
-        key={`${tType}-switch`}
+        id="bitly-switch"
+        key={`${targetType}-switch`}
         label={label}
         aria-label={ariaLabel}
         checked={useMe}

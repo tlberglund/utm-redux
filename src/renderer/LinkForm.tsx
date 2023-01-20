@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   FloatingLabel,
   Form,
@@ -32,15 +32,14 @@ import {
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
-import CountrySelect from 'react-bootstrap-country-select';
-import ICountry from 'react-bootstrap-country-select';
-import UTMTextField from './UTMTextField.tsx';
-import UTMChoice from './UTMChoice.tsx';
-import UTMChoiceShorten from './UTMChoiceShorten.tsx';
-import { BitlyConfig, defaultUTMParams, UtmParams } from './types.tsx';
-import BitlyCheck from './BitlyCheck.tsx';
-import QCode from './QRCode.tsx';
-import ConfigEditor from './configuration/ConfigEditor.tsx';
+import CountrySelect, {ICountry} from 'react-bootstrap-country-select';
+import UTMTextField from './UTMTextField';
+import UTMChoice from './UTMChoice';
+import UTMChoiceShorten from './UTMChoiceShorten';
+import { BitlyConfig, defaultBitlyConfig, defaultUTMParams, UtmParams } from './types';
+import BitlyCheck from './BitlyCheck';
+import QCode from './QRCode';
+import ConfigEditor from './configuration/ConfigEditor';
 import 'react-bootstrap-country-select/dist/react-bootstrap-country-select.css';
 
 export default function LinkForm({
@@ -59,22 +58,22 @@ export default function LinkForm({
   const [showCountry, setShowCountry] = useState(false);
   const [base, setBase] = useState('');
   const [region, setRegion] = useState('');
-  const [country, setCountry] = useState<typeof ICountry>();
+  const [country, setCountry] = useState<string | ICountry>();
   const [countryID, setCountryID] = useState('');
   const [team, setTeam] = useState('');
   const [target, setTarget] = useState('https://www.example.com/');
   const [longLink, setLongLink] = useState('');
   const [shortLink, setShortLink] = useState('');
   const [enableBitly, setEnableBitly] = useState(false);
-  const [bitlyConfig, setBitlyConfig] = useState<BitlyConfig>({});
+  const [bitlyConfig, setBitlyConfig] = useState<BitlyConfig>(defaultBitlyConfig);
   const [editConfig, setEditConfig] = useState(false);
   const [mainConfig, setMainConfig] = useState(defaultUTMParams);
   const [qrOnly, setQrOnly] = useState(false);
 
   useEffect(() => {
     window.electronAPI
-      .getConfig(null)
-      .then((response: JSON) => {
+      .getConfig()
+      .then((response: string) => {
         const c: UtmParams = JSON.parse(response);
         setMainConfig(c);
         setRestrictBases(c.restrict_bases);
@@ -90,8 +89,8 @@ export default function LinkForm({
     setEditConfig(showConfig);
     if (!showConfig) {
       window.electronAPI
-        .getParams(null, 'bitly_config')
-        .then((response: JSON) => {
+        .getParams('bitly_config')
+        .then((response: string) => {
           const c: BitlyConfig = JSON.parse(response);
           setBitlyConfig(c);
           setEnableBitly(c.bitlyEnabled);
@@ -152,7 +151,7 @@ export default function LinkForm({
     base,
     target,
     source,
-    term,
+    // term,
     finalCampaign,
     medium,
     longLink,
@@ -165,12 +164,13 @@ export default function LinkForm({
       setRestrictBases(false);
     }
   }, [qrOnly]);
+
   // If Bitly switch is turned on, get the Bitly configuration
   useEffect(() => {
     if (enableBitly) {
       window.electronAPI
-        .getParams(null, 'bitly_config')
-        .then((response: JSON) => {
+        .getParams('bitly_config')
+        .then((response: string) => {
           const c: BitlyConfig = JSON.parse(response);
           c.bitlyEnabled = true;
           setBitlyConfig(c);
@@ -192,10 +192,6 @@ export default function LinkForm({
     setRegion(value);
   };
 
-  const updateTerm = (value: string) => {
-    setTerm(value);
-  };
-
   useEffect(() => {
     let temp_campaign = '';
     if (team !== '') {
@@ -214,7 +210,7 @@ export default function LinkForm({
       ? temp_campaign.slice(0, -`_`.length)
       : temp_campaign;
     setFinalCampaign(t);
-  }, [team, term, region, countryID, campaign]);
+  }, [team,  region, countryID, campaign]); //term,
 
   useEffect(() => {
     if (bitlyConfig.bitlyEnabled) {
@@ -223,8 +219,8 @@ export default function LinkForm({
         target !== 'https://www.example.com/' &&
         source !== '' &&
         medium !== '' &&
-        campaign !== '' &&
-        term !== ''
+        campaign !== '' //&&
+        // term !== ''
       ) {
         const headers = {
           Authorization: `Bearer ${bitlyConfig.bitlyToken}`,
@@ -246,7 +242,7 @@ export default function LinkForm({
           });
       }
     }
-  }, [bitlyConfig, longLink, target, source, medium, campaign, term]);
+  }, [bitlyConfig, longLink, target, source, medium, campaign]); // , term
 
   const closeConfig = () => {
     setEditConfig(false);
@@ -257,12 +253,19 @@ export default function LinkForm({
   const updateCountry = (countryIdOrCountry: string | ICountry) => {
     if (countryIdOrCountry === null) {
       setCountryID('');
-      setCountry({ id: '', name: '' });
+      const c: ICountry = {
+        id: '', name: '',
+        flag: '',
+        alpha2: '',
+        alpha3: '',
+        ioc: ''
+      };
+      setCountry(c);
       return;
     }
-    const c = countryIdOrCountry.name;
+    const c = countryIdOrCountry as ICountry;
     setCountry(countryIdOrCountry);
-    const i = countryIdOrCountry.id;
+    const i = c.id;
     setCountryID(i);
   };
 
@@ -358,6 +361,7 @@ export default function LinkForm({
             valueChanged={setCampaign}
             targetType="utm_campaign"
             enableMe={!qrOnly}
+            qrOnly={qrOnly}
           />
         </Col>
       </Row>
@@ -397,12 +401,11 @@ export default function LinkForm({
         {showCountry && (
           <Col sm={4}>
             <CountrySelect
-              value={country}
+              value={country as ICountry}
               valueAs="object"
               size="lg"
               onChange={updateCountry}
-              enabled={!qrOnly}
-            />
+              onTextChange={updateCountry}            />
           </Col>
         )}
       </Row>
