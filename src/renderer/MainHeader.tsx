@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import React from 'react';
 import './hyde.css';
 
 export default function MainHeader() {
   return (
-    // eslint-disable-next-line react/jsx-filename-extension
     <main className="content">
       <div className="posts">
         <article className="post">
