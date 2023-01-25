@@ -85,6 +85,24 @@ html {
   font-size: 3.25rem;
 }
 
+.sidebar-lead {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-contact {
+  font-size: 1rem;
+  font-weight: 250;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-credit {
+  font-size: 1rem;
+  font-weight: 250;
+  margin-bottom: .25rem;
+}
+
 /* Sidebar nav */
 .sidebar-nav {
   padding-left: 0;

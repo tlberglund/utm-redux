@@ -41,6 +41,7 @@ import BitlyCheck from './BitlyCheck';
 import QCode from './QRCode';
 import ConfigEditor from './configuration/ConfigEditor';
 import 'react-bootstrap-country-select/dist/react-bootstrap-country-select.css';
+import React from 'react';
 
 export default function LinkForm({
   showConfig,
@@ -272,7 +273,11 @@ export default function LinkForm({
   return (
     <div className="link-form">
       <div>
-        <QCode link={shortLink === '' ? longLink : shortLink} ext="PNG" qrOnly={qrOnly} />
+        <QCode
+          link={!enableBitly ? longLink : shortLink}
+          ext="PNG"
+          qrOnly={qrOnly}
+        />
       </div>
       <p />
       <Row>
@@ -287,18 +292,19 @@ export default function LinkForm({
             }}
           />
         </Col>
-        <Col sm={4}>
+        <Col sm={4}></Col>
+        {!qrOnly && (
+          <Col sm={4} style={{ alignContent: 'end' }}>
+            <BitlyCheck
+              targetType="bitly_config"
+              useMe={enableBitly}
+              valueChanged={setEnableBitly}
+            />
           </Col>
-        {!qrOnly && (<Col sm={4} style={{alignContent: 'end'}}>
-          <BitlyCheck
-            targetType="bitly_config"
-            useMe={enableBitly}
-            valueChanged={setEnableBitly}
-          />
-        </Col> )}
+        )}
       </Row>
       {/* utm_target */}
-      <Row>
+      <Row style={{ marginTop: '.5rem' }}>
         <InputGroup className="mb-3" size="lg">
           <Col sm={4}>
             {restrictBases && (
@@ -323,7 +329,6 @@ export default function LinkForm({
           </Col>
         </InputGroup>
       </Row>
-      <p />
       {/* utm_source */}
       <Row>
         <Col sm={12}>
@@ -338,7 +343,6 @@ export default function LinkForm({
           </InputGroup>
         </Col>
       </Row>
-      <p />
       {/* utm_medium */}
       <Row>
         <Col sm={12}>
@@ -353,7 +357,6 @@ export default function LinkForm({
           </InputGroup>
         </Col>
       </Row>
-      <p />
       {/* utm_source */}
       <Row>
         <Col sm={12}>
@@ -365,9 +368,8 @@ export default function LinkForm({
           />
         </Col>
       </Row>
-      <p />
       <Row>
-        <Col sm={showCountry ? 4 : 6}>
+        <Col sm={showCountry ? 4 : 6} style={{ marginTop: '.75rem' }}>
           <InputGroup className="mb-3" size="lg">
             <UTMChoiceShorten
               valueChanged={updateTeam}
@@ -378,7 +380,7 @@ export default function LinkForm({
             />
           </InputGroup>
         </Col>
-        <Col sm={showCountry ? 4 : 6}>
+        <Col sm={showCountry ? 4 : 6} style={{ marginTop: '.75rem' }}>
           <InputGroup className="mb-3" size="lg">
             <UTMChoiceShorten
               valueChanged={updateRegion}
@@ -399,17 +401,17 @@ export default function LinkForm({
         </InputGroup>
       </Row> */}
         {showCountry && (
-          <Col sm={4}>
+          <Col sm={4} style={{ marginTop: '1rem' }}>
             <CountrySelect
               value={country as ICountry}
               valueAs="object"
               size="lg"
               onChange={updateCountry}
-              onTextChange={updateCountry}            />
+              onTextChange={updateCountry}
+            />
           </Col>
         )}
       </Row>
-      <p />
       <Row>
         <Col sm={12}>
           <InputGroup className="mb-3" size="lg">
@@ -440,8 +442,8 @@ export default function LinkForm({
           </InputGroup>
         </Col>
       </Row>
-          <ConfigEditor showMe={editConfig} callback={closeConfig} />
-
+      <p></p>
+      <ConfigEditor showMe={editConfig} callback={closeConfig} />
     </div>
   );
 }
