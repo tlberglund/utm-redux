@@ -89,54 +89,52 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
       <div className="alert-columns">
         {!qrState && (
           <div className="alert-column1">
-          {copied && (
-            <OverlayTrigger
-              delay={{ show: 250, hide: 400 }}
-              rootClose
-              overlay={
-                <Tooltip id="alert-tooltip">
-                  You have successfully copied the link!
-                </Tooltip>
-              }
-            >
-              <Clipboard2CheckFill
-                className="copy-icon header-stuff"
-                style={{
-                  fontSize: '2rem',
-                  color: '#0B263E',
-                }}
-              />
-            </OverlayTrigger>
-          )}
-          {!copied && (
-            <OverlayTrigger
-              placement="auto"
-              delay={{ show: 250, hide: 400 }}
-              rootClose
-              overlay={
-                <Tooltip id="alert-tooltip">
-                  Click here to copy your link!
-                </Tooltip>
-              }
-            >
-              <ClipboardData
-                className="copy-icon header-stuff"
-                tabIndex={0}
-                cursor="pointer"
-                role="button"
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick={copyMe}
-                // eslint-disable-next-line react/jsx-no-bind
-                onKeyPress={copyMe}
-                title="Click to copy your link!"
-              />
-            </OverlayTrigger>
-          )}
-
-        </div>)}
-        {qrState && (
-          <div className="alert-column1">
-            </div>)}
+            {copied && (
+              <OverlayTrigger
+                delay={{ show: 250, hide: 400 }}
+                rootClose
+                overlay={
+                  <Tooltip id="alert-tooltip">
+                    You have successfully copied the link!
+                  </Tooltip>
+                }
+              >
+                <Clipboard2CheckFill
+                  className="copy-icon header-stuff"
+                  style={{
+                    fontSize: '2rem',
+                    color: '#0B263E',
+                  }}
+                />
+              </OverlayTrigger>
+            )}
+            {!copied && (
+              <OverlayTrigger
+                placement="auto"
+                delay={{ show: 250, hide: 400 }}
+                rootClose
+                overlay={
+                  <Tooltip id="alert-tooltip">
+                    Click here to copy your link!
+                  </Tooltip>
+                }
+              >
+                <ClipboardData
+                  className="copy-icon header-stuff"
+                  tabIndex={0}
+                  cursor="pointer"
+                  role="button"
+                  // eslint-disable-next-line react/jsx-no-bind
+                  onClick={copyMe}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  onKeyPress={copyMe}
+                  title="Click to copy your link!"
+                />
+              </OverlayTrigger>
+            )}
+          </div>
+        )}
+        {qrState && <div className="alert-column1"></div>}
         <div className="alert-column2">
           <OverlayTrigger
             placement="auto"
@@ -144,14 +142,23 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
             rootClose
             overlay={
               <Tooltip id="alert-tooltip">
-                {qrState ? 'This data is encoded in the QR Code' : 'Click here to copy your QR Code!' }
+                {qrState
+                  ? 'This data is encoded in the QR Code'
+                  : 'Click here to copy your link!'}
               </Tooltip>
             }
           >
             {!qrState ? (
-            <div onClick={copyMe} onKeyDown={copyMe} role="button" tabIndex={0}>
-              <strong style={{ cursor: 'pointer' }} className="header-stuff">{link}</strong>
-            </div>
+              <div
+                onClick={copyMe}
+                onKeyDown={copyMe}
+                role="button"
+                tabIndex={0}
+              >
+                <strong style={{ cursor: 'pointer' }} className="header-stuff">
+                  {link}
+                </strong>
+              </div>
             ) : (
               <div>
                 <strong className="header-stuff">{link}</strong>
@@ -161,23 +168,40 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
         </div>
         <div className="alert-column3">
           <Row>
-            <div ref={ref}>
-              <QRCode
-                value={qrCode}
-                logoImage={icon}
-                logoWidth={120}
-                logoHeight={110}
-                size={200}
-                fgColor="#1F3A56"
-                qrStyle="dots"
-                eyeColor="#1F3A56"
-                eyeRadius={[
-                  [30, 30, 0, 30], // top/left eye
-                  [30, 30, 30, 0], // top/right eye
-                  [30, 0, 30, 30], // bottom/left
-                ]}
-              />
-            </div>
+            <OverlayTrigger
+              placement="auto"
+              delay={{ show: 250, hide: 400 }}
+              rootClose
+              overlay={
+                <Tooltip id="qrcode-tooltip">
+                  Click the QR Code or the 'Download' button to save your QR Code
+                </Tooltip>
+              }
+            >
+              <div
+                ref={ref}
+                onClick={onDownloadClick}
+                // onKeyDown={onDownloadClick}
+                role="button"
+                tabIndex={1}
+              >
+                <QRCode
+                  value={qrCode}
+                  logoImage={icon}
+                  logoWidth={120}
+                  logoHeight={110}
+                  size={200}
+                  fgColor="#1F3A56"
+                  qrStyle="dots"
+                  eyeColor="#1F3A56"
+                  eyeRadius={[
+                    [30, 30, 0, 30], // top/left eye
+                    [30, 30, 30, 0], // top/right eye
+                    [30, 0, 30, 30], // bottom/left
+                  ]}
+                />
+              </div>
+            </OverlayTrigger>
           </Row>
           <Row>
             <Col sm="6">

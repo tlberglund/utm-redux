@@ -158,10 +158,10 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.5',
+    applicationVersion: 'v1.6.6',
     copyright: '© 2023',
-    version: 'b1024',
-    credits: 'David G. Simmons & Electron React Boilerplate',
+    version: 'b1025',
+    credits: 'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],
     website: 'https://github.com/davidgs/utm-redux',
     iconPath: getAssetPath('icon.png')

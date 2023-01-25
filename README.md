@@ -1,18 +1,18 @@
 
 # UTM Link Builder & QR Code Generator
 
-A simple Electron/ReactJS application to help you generate useful UTM links and QR codes.
+A simple Electron/React JS application to help you generate useful UTM links and QR codes.
 
 ## Features
 
 - Generate UTM links
 - Generate QR codes
 - Integrated with Bit.ly API to also shorten links for you
-- Highly configurable interface with a configuration-page that allows you to change everything from menu contents to tooltip messages, etc.
+- Highly configurable interface with a configuration-page that allows you to change everything from menu contents to tool tip messages, etc.
 - Password-protected settings page
 - Restrict referral links to pre-defined domain(s)
 
-## Screenshots
+## Screen shots
 
 The basic UI:
 ![Basic UI][basic]
