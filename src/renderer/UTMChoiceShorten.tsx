@@ -111,7 +111,13 @@ export default function UTMChoice({
                 valueChanged('');
                 return;
               }
-              const matches = v?.match(/\b(\w)/g)?.join('').toLowerCase();
+              const vals = v?.split(' ');
+              let matches: string | undefined = '';
+              if (vals.length > 1) {
+                matches = v?.match(/\b(\w)/g)?.join('').toLowerCase();
+              } else {
+                matches = v?.toLowerCase();
+              }
               if (matches) {
                 valueChanged(matches);
               } else {

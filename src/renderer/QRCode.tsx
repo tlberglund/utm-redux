@@ -27,13 +27,15 @@ import {
   Button,
   OverlayTrigger,
   Tooltip,
-  Dropdown,
-  DropdownButton,
   Row,
   Col,
+  Form,
 } from 'react-bootstrap';
+import RangeSlider from 'react-bootstrap-range-slider';
 import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
+import QRConfigForm from './configuration/QRConfigForm';
 import icon from '../../assets/images/startree_logo-mark_fill-lightning-4.png';
+import PasswordForm from './configuration/PasswordForm';
 
 export default function QCode({ link, ext, qrOnly }: { link: string; ext: string, qrOnly: boolean }) {
   const [fileExt, setFileExt] = useState<string>('png');
@@ -42,26 +44,25 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
   const [qrCode, setQRCode] = useState<string>(
     'https://example.com/'
   );
+  const [qrSize, setQRSize] = useState<number>(175);
   const [qrState, setQrState] = useState<boolean>(false);
+  const [showConfig, setShowConfig] = useState<boolean>(false);
   const ref = useRef(null);
 
-  const onExtensionChange = (event: SyntheticEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    let target = event.target as HTMLInputElement;
-    setFileExt(target?.id);
-  };
+
 
   const onDownloadClick = () => {
     const canvas = document.getElementById('react-qrcode-logo') as HTMLCanvasElement;
-    const url = canvas?.toDataURL('image/jpg', 0.8);
-
-    // remove Base64 stuff from the Image
-    const base64Data = url.replace(/^data:image\/png;base64,/, '');
     const dataURL = canvas?.toDataURL(`image/${fileExt}`);
     const a = document.createElement('a');
     a.href = dataURL;
     a.download = `qrcode.${fileExt}`;
     a.click();
+  };
+
+  const showConfigWindow = () => {
+    console.log('showConfigWindow: ', showConfig)
+    setShowConfig(!showConfig);
   };
 
   // Copy link to the clipboard and change the icon to a checkmark
@@ -167,14 +168,15 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
           </OverlayTrigger>
         </div>
         <div className="alert-column3">
-          <Row>
+          <Row style={{ margin: 'auto' }}>
             <OverlayTrigger
               placement="auto"
               delay={{ show: 250, hide: 400 }}
               rootClose
               overlay={
                 <Tooltip id="qrcode-tooltip">
-                  Click the QR Code or the 'Download' button to save your QR Code
+                  Click the QR Code or the 'Download' button to save your QR
+                  Code
                 </Tooltip>
               }
             >
@@ -190,7 +192,7 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
                   logoImage={icon}
                   logoWidth={120}
                   logoHeight={110}
-                  size={200}
+                  size={qrSize}
                   fgColor="#1F3A56"
                   qrStyle="dots"
                   eyeColor="#1F3A56"
@@ -203,47 +205,45 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
               </div>
             </OverlayTrigger>
           </Row>
-          <Row>
-            <Col sm="6">
-              <OverlayTrigger
-                placement="auto"
-                overlay={<Tooltip>Choose image Format</Tooltip>}
-              >
-                <DropdownButton
-                  id="dropdown-basic-button"
-                  title={fileExt.toUpperCase()}
-                  size="sm"
-                  flip
-                >
-                  <Dropdown.Item
-                    style={{ color: '#000000' }}
-                    id="png"
-                    onClick={onExtensionChange}
-                  >
-                    PNG
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    style={{ color: '#000000' }}
-                    id="jpeg"
-                    onClick={onExtensionChange}
-                  >
-                    JPEG
-                  </Dropdown.Item>
-                </DropdownButton>
-              </OverlayTrigger>
-            </Col>
-            <Col sm="6">
+          <Row style={{ marginRight: '-30px', textAlignLast: 'right' }}>
+            <Col sm="6" style={{marginRight: '-30px'}}>
               <OverlayTrigger
                 placement="auto"
                 overlay={<Tooltip>Download your QR Code</Tooltip>}
               >
-                <Button size="sm" onClick={onDownloadClick}>
+                <Button
+                  variant="outline-success"
+                  size="sm"
+                  onClick={onDownloadClick}
+                >
                   Download
+                </Button>
+              </OverlayTrigger>
+            </Col>
+            <Col sm="6" >
+              <OverlayTrigger
+                placement="auto"
+                overlay={<Tooltip>Adjust your QR Code</Tooltip>}
+              >
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={showConfigWindow}
+                >
+                  Options
                 </Button>
               </OverlayTrigger>
             </Col>
           </Row>
         </div>
+        <QRConfigForm
+          show={showConfig}
+          size={qrSize}
+          exten={ext}
+          sizeCallback={setQRSize}
+          extensionCallback={setFileExt}
+          onHide={showConfigWindow}
+        />
       </div>
     </div>
   );

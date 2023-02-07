@@ -72,13 +72,13 @@ export const defaultUTMBases = {
   ariaLabel: 'Base URLs for UTM Target',
   tooltip: 'Base URLs for UTM Target',
   error: 'These need to be full URLs',
-  value: ['https://foo.com/', 'https://bar.com/', 'https://Foo.Bar.com/'],
+  value: ['https://startree.ai/', 'https://dev.startree.ai/'],
 };
 
 export const defaultUTMTeamName: UtmObj = {
   showName: true,
-  label: 'Team Name',
-  tooltip: 'What is your team name?',
+  label: 'Team',
+  tooltip: 'What StarTree team are you on?',
   error: 'Please enter a valid team name',
   ariaLabel: 'Team Name',
   value: [
@@ -97,8 +97,8 @@ export const defaultUTMTeamName: UtmObj = {
 
 export const defaultUTMRegionName: UtmObj = {
   showName: true,
-  label: 'Region Name',
-  tooltip: 'What is your region name?',
+  label: 'Region',
+  tooltip: 'What region will this target?',
   error: 'Please enter a valid region name',
   ariaLabel: 'Region Name',
   value: ['North America', 'APAC', 'EMEA', 'Global'],
@@ -107,16 +107,16 @@ export const defaultUTMRegionName: UtmObj = {
 export const defaultUTMTarget: UtmObj = {
   showName: true,
   label: 'Link Target',
-  tooltip: 'Where will this link point to?',
+  tooltip: 'Where will this link point to? It should be a startree.ai link',
   error: 'Please enter a valid URL',
-  ariaLabel: 'Where will this link point to?',
+  ariaLabel: 'Where will this link point to? It should be a startree.ai link',
   value: [''],
 };
 
 export const defaultUTMTerm: UtmObj = {
   showName: true,
   label: 'Source',
-  tooltip: `What's the Campaign Source?`,
+  tooltip: `What's the Campaign Source? This would be where you're posting the link, usually.`,
   error: 'Please choose a valid source',
   ariaLabel: `What's the Campaign Source?`,
   value: [

@@ -35,6 +35,7 @@ export type electronAPI = {
   getParams: (key: string) => Promise<string>;
   saveConfig: (key: string) => Promise<string>;
   checkPass: () => Promise<string>;
+  clearForm: () => void;
 };
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -50,6 +51,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   checkPass: () => {
     return ipcRenderer.invoke('check-passwd');
   },
+  clearForm: () => {
+    return ipcRenderer.invoke('clear-form');
+  }
 });
 
 // Path: src/main/preload.ts

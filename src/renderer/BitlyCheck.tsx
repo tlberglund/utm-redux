@@ -25,13 +25,16 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { OverlayTrigger, Tooltip, Overlay } from 'react-bootstrap';
 import { BitlyConfig } from './types';
+import React from 'react';
 
 export default function BitlyCheck({
   useMe,
+  bitlyEnabled,
   valueChanged,
   targetType,
 }: {
   useMe: boolean;
+  bitlyEnabled: boolean;
   valueChanged: (value: boolean) => void;
   targetType: string;
 }): JSX.Element {
@@ -67,6 +70,8 @@ export default function BitlyCheck({
         label={label}
         aria-label={ariaLabel}
         checked={useMe}
+        disabled={!bitlyEnabled}
+        style={{float: 'left'}}
         onChange={(e) => {
           valueChanged(e.target.checked);
         }}
@@ -79,4 +84,5 @@ BitlyCheck.propTypes = {
   valueChanged: PropTypes.func.isRequired,
   targetType: PropTypes.string.isRequired,
   useMe: PropTypes.bool.isRequired,
+  bitlyEnabled: PropTypes.bool.isRequired,
 };
