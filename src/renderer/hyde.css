@@ -347,8 +347,8 @@ a.sidebar-nav-item:focus {
   align-items: center;
   justify-content: center;
   margin: 2px;
-  padding: 5px;
-  width: 25%;
+  padding-right: -10px !important;
+  width: 30%;
 }
 
 .qr-position {
@@ -461,4 +461,9 @@ a.sidebar-nav-item:focus {
 
 .header-stuff {
   color: #0B3665
+}
+
+.vertical-slider {
+  transform: rotate(90deg);
+  padding-top: 5rem;
 }

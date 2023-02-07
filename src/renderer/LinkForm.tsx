@@ -22,6 +22,7 @@
  */
 import { ChangeEvent, useEffect, useState } from 'react';
 import {
+  Button,
   FloatingLabel,
   Form,
   FormControl,
@@ -65,11 +66,24 @@ export default function LinkForm({
   const [target, setTarget] = useState('https://www.example.com/');
   const [longLink, setLongLink] = useState('');
   const [shortLink, setShortLink] = useState('');
-  const [enableBitly, setEnableBitly] = useState(false);
+  const [useBitly, setUseBitly] = useState(false);
   const [bitlyConfig, setBitlyConfig] = useState<BitlyConfig>(defaultBitlyConfig);
+  const [enableBitly, setEnableBitly] = useState(false);
   const [editConfig, setEditConfig] = useState(false);
   const [mainConfig, setMainConfig] = useState(defaultUTMParams);
   const [qrOnly, setQrOnly] = useState(false);
+
+  const clearForm = (): void => {
+    window.electronAPI.clearForm(null)
+      .then((response: string) => {
+        console.log('cleared form');
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      }
+      );
+  };
 
   useEffect(() => {
     window.electronAPI
@@ -94,7 +108,7 @@ export default function LinkForm({
         .then((response: string) => {
           const c: BitlyConfig = JSON.parse(response);
           setBitlyConfig(c);
-          setEnableBitly(c.bitlyEnabled);
+          setUseBitly(c.bitlyEnabled);
           return '';
         })
         .catch((error: unknown) => {
@@ -168,7 +182,7 @@ export default function LinkForm({
 
   // If Bitly switch is turned on, get the Bitly configuration
   useEffect(() => {
-    if (enableBitly) {
+    if (useBitly) {
       window.electronAPI
         .getParams('bitly_config')
         .then((response: string) => {
@@ -183,7 +197,7 @@ export default function LinkForm({
     } else {
       setShortLink('');
     }
-  }, [enableBitly, setBitlyConfig]);
+  }, [useBitly, setBitlyConfig]);
 
   const updateTeam = (value: string) => {
     setTeam(value);
@@ -212,6 +226,20 @@ export default function LinkForm({
       : temp_campaign;
     setFinalCampaign(t);
   }, [team,  region, countryID, campaign]); //term,
+
+  useEffect(() => {
+    if (
+        target !== 'https://www.example.com/' &&
+        source !== '' &&
+        medium !== '' &&
+        campaign !== '' //&&
+        // term !== ''
+      ) {
+        setEnableBitly(true);
+      } else {
+        setEnableBitly(false);
+      }
+  }, [target, source, medium, campaign]); //term,
 
   useEffect(() => {
     if (bitlyConfig.bitlyEnabled) {
@@ -274,34 +302,44 @@ export default function LinkForm({
     <div className="link-form">
       <div>
         <QCode
-          link={!enableBitly ? longLink : shortLink}
+          link={!useBitly ? longLink : shortLink}
           ext="PNG"
           qrOnly={qrOnly}
         />
       </div>
-      <p />
       <Row>
-        <Col sm={4}>
+        {!qrOnly && (
+          <Col sm={2} style={{ width: '20%' }}>
+            <BitlyCheck
+              targetType="bitly_config"
+              useMe={useBitly}
+              bitlyEnabled={enableBitly}
+              valueChanged={setUseBitly}
+            />
+          </Col>
+        )}
+        <Col sm={3}>
           <Form.Check
             type="checkbox"
             id="qr-only-show"
-            label="Just generate QR Codes"
+            label="QR Code Only"
             checked={qrOnly}
+            style={{ float: 'left' }}
             onChange={(e) => {
               setQrOnly(e.target.checked);
             }}
           />
         </Col>
-        <Col sm={4}></Col>
-        {!qrOnly && (
-          <Col sm={4} style={{ alignContent: 'end' }}>
-            <BitlyCheck
-              targetType="bitly_config"
-              useMe={enableBitly}
-              valueChanged={setEnableBitly}
-            />
-          </Col>
-        )}
+        <Col sm={6} style={{ textAlign: 'right', float: 'right' }}>
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={clearForm}
+            style={{ float: 'right', marginRight: '-30px' }}
+          >
+            Clear Form
+          </Button>
+        </Col>
       </Row>
       {/* utm_target */}
       <Row style={{ marginTop: '.5rem' }}>

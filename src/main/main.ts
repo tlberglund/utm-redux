@@ -180,6 +180,10 @@ const createWindow = async () => {
     },
   });
 
+  ipcMain.handle('clear-form', () => {
+    mainWindow?.webContents.reload();
+  });
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
