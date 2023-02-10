@@ -27,18 +27,11 @@ import PasswordForm from './configuration/PasswordForm';
 import StarTree from '../../assets/images/ST_Logo_WhiteYellow.svg';
 
 export default function SideNav({
-  showConfig,
   callback,
 }: {
-  showConfig: boolean;
   callback: (value: boolean) => void;
 }) {
-  const [enableConfig, setEnableConfig] = useState(showConfig);
   const [showPasswd, setShowPasswd] = useState(false);
-
-  useEffect(() => {
-    setEnableConfig(showConfig);
-  }, [showConfig]);
 
   const passwdVisible = (show: boolean) => {
     setShowPasswd(show);
@@ -111,7 +104,7 @@ export default function SideNav({
                     key="config-switch"
                     label="Edit Configuration"
                     aria-label="Edit Configuration"
-                    checked={enableConfig}
+                    checked={showPasswd}
                     onChange={(e) => {
                       passwdVisible(e.target.checked);
                     }}
