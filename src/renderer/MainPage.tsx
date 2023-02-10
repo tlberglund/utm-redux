@@ -22,11 +22,10 @@
  */
 
 import './hyde.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import MainHeader from './MainHeader';
 import SideNav from './SideNav';
 import LinkForm from './LinkForm';
-import React from 'react';
 
 export default function MainPage() {
   const [editConfig, setEditConfig] = useState(false);
@@ -38,7 +37,7 @@ export default function MainPage() {
       </div>
       <div className="main-column">
         <MainHeader />
-        <LinkForm showConfig={editConfig} callback={setEditConfig} />
+        <LinkForm />
       </div>
     </div>
   );

@@ -20,39 +20,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React, { useEffect, useState, useRef, SyntheticEvent } from 'react';
-import PropTypes from 'prop-types';
-import { QRCode } from 'react-qrcode-logo';
-import {
-  Button,
-  OverlayTrigger,
-  Tooltip,
-  Row,
-  Col,
-  Form,
-} from 'react-bootstrap';
-import RangeSlider from 'react-bootstrap-range-slider';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  KeyboardEventHandler,
+} from 'react';
+import { QRCode, IProps } from 'react-qrcode-logo';
+import { Button, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
 import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
 import QRConfigForm from './configuration/QRConfigForm';
-import icon from '../../assets/images/startree_logo-mark_fill-lightning-4.png';
-import PasswordForm from './configuration/PasswordForm';
+import logo from '../../assets/images/logo-mark_fill.png';
 
-export default function QCode({ link, ext, qrOnly }: { link: string; ext: string, qrOnly: boolean }) {
+export default function QCode({
+  link,
+  ext,
+  qrOnly,
+}: {
+  link: string;
+  ext: string;
+  qrOnly: boolean;
+}) {
   const [fileExt, setFileExt] = useState<string>('png');
   const [dataLink, setDataLink] = useState<string>('https://example.com/');
   const [copied, setCopied] = useState<boolean>(false);
-  const [qrCode, setQRCode] = useState<string>(
-    'https://example.com/'
-  );
+  const [qrProps, setQRProps] = useState<IProps>({
+    value: 'https://google.com/',
+    ecLevel: 'H',
+    size: 175,
+    quietZone: 0,
+    enableCORS: true,
+    bgColor: '#FFFFFF',
+    fgColor: 'rgba(11, 38, 62, 1)',
+    logoImage: logo,
+    logoWidth: 60,
+    logoHeight: 60,
+    logoOpacity: 10,
+    removeQrCodeBehindLogo: false,
+    qrStyle: 'dots',
+    eyeColor: 'rgba(11, 38, 62, 1)',
+    eyeRadius: [
+      [16, 16, 0, 16],
+      [16, 16, 16, 0],
+      [16, 0, 16, 16],
+    ],
+  });
+
   const [qrSize, setQRSize] = useState<number>(175);
   const [qrState, setQrState] = useState<boolean>(false);
   const [showConfig, setShowConfig] = useState<boolean>(false);
   const ref = useRef(null);
 
-
+  const updateQrSize = (size: number) => {
+    setQRSize(size);
+    setQRProps({ ...qrProps, size });
+  };
 
   const onDownloadClick = () => {
-    const canvas = document.getElementById('react-qrcode-logo') as HTMLCanvasElement;
+    const canvas = document.getElementById(
+      'react-qrcode-logo'
+    ) as HTMLCanvasElement;
     const dataURL = canvas?.toDataURL(`image/${fileExt}`);
     const a = document.createElement('a');
     a.href = dataURL;
@@ -61,7 +88,6 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
   };
 
   const showConfigWindow = () => {
-    console.log('showConfigWindow: ', showConfig)
     setShowConfig(!showConfig);
   };
 
@@ -75,9 +101,13 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
       .catch((err) => console.error('Error: ', err));
   }
 
+  const updateQRProps = (link: string) => {
+    setQRProps({ ...qrProps, value: link });
+  };
+
   useEffect(() => {
     setDataLink(link);
-    setQRCode(link);
+    updateQRProps(link);
     setCopied(false);
   }, [link]);
 
@@ -88,54 +118,51 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
   return (
     <div>
       <div className="alert-columns">
-        {!qrState && (
-          <div className="alert-column1">
-            {copied && (
-              <OverlayTrigger
-                delay={{ show: 250, hide: 400 }}
-                rootClose
-                overlay={
-                  <Tooltip id="alert-tooltip">
-                    You have successfully copied the link!
-                  </Tooltip>
-                }
-              >
-                <Clipboard2CheckFill
-                  className="copy-icon header-stuff"
-                  style={{
-                    fontSize: '2rem',
-                    color: '#0B263E',
-                  }}
-                />
-              </OverlayTrigger>
-            )}
-            {!copied && (
-              <OverlayTrigger
-                placement="auto"
-                delay={{ show: 250, hide: 400 }}
-                rootClose
-                overlay={
-                  <Tooltip id="alert-tooltip">
-                    Click here to copy your link!
-                  </Tooltip>
-                }
-              >
-                <ClipboardData
-                  className="copy-icon header-stuff"
-                  tabIndex={0}
-                  cursor="pointer"
-                  role="button"
-                  // eslint-disable-next-line react/jsx-no-bind
-                  onClick={copyMe}
-                  // eslint-disable-next-line react/jsx-no-bind
-                  onKeyPress={copyMe}
-                  title="Click to copy your link!"
-                />
-              </OverlayTrigger>
-            )}
-          </div>
-        )}
-        {qrState && <div className="alert-column1"></div>}
+        <div className="alert-column1">
+          {copied && (
+            <OverlayTrigger
+              delay={{ show: 250, hide: 400 }}
+              rootClose
+              overlay={
+                <Tooltip id="alert-tooltip">
+                  You have successfully copied the link!
+                </Tooltip>
+              }
+            >
+              <Clipboard2CheckFill
+                className="copy-icon header-stuff"
+                style={{
+                  fontSize: '2rem',
+                  color: '#0B263E',
+                }}
+              />
+            </OverlayTrigger>
+          )}
+          {!copied && (
+            <OverlayTrigger
+              placement="auto"
+              delay={{ show: 250, hide: 400 }}
+              rootClose
+              overlay={
+                <Tooltip id="alert-tooltip">
+                  Click here to copy your link!
+                </Tooltip>
+              }
+            >
+              <ClipboardData
+                className="copy-icon header-stuff"
+                tabIndex={0}
+                cursor="pointer"
+                role="button"
+                // eslint-disable-next-line react/jsx-no-bind
+                onClick={copyMe}
+                // eslint-disable-next-line react/jsx-no-bind
+                onKeyDown={null as unknown as KeyboardEventHandler}
+                title="Click to copy your link!"
+              />
+            </OverlayTrigger>
+          )}
+        </div>
         <div className="alert-column2">
           <OverlayTrigger
             placement="auto"
@@ -149,22 +176,16 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
               </Tooltip>
             }
           >
-            {!qrState ? (
-              <div
-                onClick={copyMe}
-                onKeyDown={copyMe}
-                role="button"
-                tabIndex={0}
-              >
-                <strong style={{ cursor: 'pointer' }} className="header-stuff">
-                  {link}
-                </strong>
-              </div>
-            ) : (
-              <div>
-                <strong className="header-stuff">{link}</strong>
-              </div>
-            )}
+            <div
+              onClick={copyMe}
+              onKeyDown={null as unknown as KeyboardEventHandler}
+              role="button"
+              tabIndex={0}
+            >
+              <strong style={{ cursor: 'pointer' }} className="header-stuff">
+                {link}
+              </strong>
+            </div>
           </OverlayTrigger>
         </div>
         <div className="alert-column3">
@@ -175,38 +196,41 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
               rootClose
               overlay={
                 <Tooltip id="qrcode-tooltip">
-                  Click the QR Code or the 'Download' button to save your QR
-                  Code
+                  Click the QR Code or the &lsquo;Download&rsquo; button to save
+                  the QR Code
                 </Tooltip>
               }
             >
               <div
                 ref={ref}
                 onClick={onDownloadClick}
-                // onKeyDown={onDownloadClick}
+                onKeyDown={null as unknown as KeyboardEventHandler}
                 role="button"
-                tabIndex={1}
+                tabIndex={-1}
               >
                 <QRCode
-                  value={qrCode}
-                  logoImage={icon}
-                  logoWidth={120}
-                  logoHeight={110}
-                  size={qrSize}
-                  fgColor="#1F3A56"
-                  qrStyle="dots"
-                  eyeColor="#1F3A56"
-                  eyeRadius={[
-                    [30, 30, 0, 30], // top/left eye
-                    [30, 30, 30, 0], // top/right eye
-                    [30, 0, 30, 30], // bottom/left
-                  ]}
+                  id="react-qrcode-logo"
+                  value={qrProps.value}
+                  size={qrProps.size}
+                  bgColor={qrProps.bgColor}
+                  fgColor={qrProps.fgColor}
+                  logoImage={qrProps.logoImage}
+                  qrStyle={qrProps.qrStyle}
+                  logoWidth={qrProps.logoWidth}
+                  logoHeight={qrProps.logoHeight}
+                  logoOpacity={qrProps.logoOpacity}
+                  eyeColor={qrProps.eyeColor}
+                  eyeRadius={qrProps.eyeRadius}
+                  quietZone={qrProps.quietZone}
+                  enableCORS={qrProps.enableCORS}
+                  ecLevel={qrProps.ecLevel}
                 />
               </div>
             </OverlayTrigger>
           </Row>
           <Row style={{ marginRight: '-30px', textAlignLast: 'right' }}>
-            <Col sm="6" style={{marginRight: '-30px'}}>
+            <Col sm="6" style={{ marginRight: '-30px' }} />
+            <Col sm="6" style={{ marginRight: '-30px' }}>
               <OverlayTrigger
                 placement="auto"
                 overlay={<Tooltip>Download your QR Code</Tooltip>}
@@ -220,7 +244,7 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
                 </Button>
               </OverlayTrigger>
             </Col>
-            <Col sm="6" >
+            {/* <Col sm="6">
               <OverlayTrigger
                 placement="auto"
                 overlay={<Tooltip>Adjust your QR Code</Tooltip>}
@@ -233,14 +257,14 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
                   Options
                 </Button>
               </OverlayTrigger>
-            </Col>
+            </Col> */}
           </Row>
         </div>
         <QRConfigForm
           show={showConfig}
           size={qrSize}
           exten={ext}
-          sizeCallback={setQRSize}
+          sizeCallback={updateQrSize}
           extensionCallback={setFileExt}
           onHide={showConfigWindow}
         />
@@ -248,8 +272,3 @@ export default function QCode({ link, ext, qrOnly }: { link: string; ext: string
     </div>
   );
 }
-
-QCode.propTypes = {
-  link: PropTypes.string.isRequired,
-  ext: PropTypes.string.isRequired,
-};

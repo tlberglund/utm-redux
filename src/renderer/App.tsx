@@ -22,18 +22,16 @@
  */
 import React from 'react';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-
-const icon = require( '../../assets/icon.svg');
 import './App.css';
 import MainPage from './MainPage';
 
-const Hello = () => {
+function Hello() {
   return (
     <div>
       <MainPage />
     </div>
   );
-};
+}
 
 export default function App() {
   return (

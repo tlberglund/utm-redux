@@ -21,13 +21,18 @@
  * SOFTWARE.
  */
 
+export type UtmKeyValue = {
+  key: string;
+  value: string;
+};
+
 export type UtmObj = {
   showName: boolean;
   label: string;
   ariaLabel: string;
   tooltip: string;
   error: string;
-  value: string[];
+  value: UtmKeyValue[];
 };
 
 export type BitlyConfig = {
@@ -67,127 +72,140 @@ export const defaultBitlyConfig: BitlyConfig = {
 };
 
 export const defaultUTMBases = {
-  showName: true,
-  label: 'UTM Target Base URLs',
-  ariaLabel: 'Base URLs for UTM Target',
-  tooltip: 'Base URLs for UTM Target',
+  showName: false,
+  label: 'StarTree Property',
+  ariaLabel: 'StarTree Property',
+  tooltip: 'Which StarTree web property will this link point to?',
   error: 'These need to be full URLs',
-  value: ['https://startree.ai/', 'https://dev.startree.ai/'],
+  value: [
+    { key: 'https://startree.ai/', value: 'https://startree.ai' },
+    { key: 'https://dev.startree.ai/', value: 'https://dev.startree.ai' },
+    { key: 'https://rtasummit.com/', value: 'https://rtasummit.com' },
+  ],
 };
 
 export const defaultUTMTeamName: UtmObj = {
-  showName: true,
+  showName: false,
   label: 'Team',
   tooltip: 'What StarTree team are you on?',
   error: 'Please enter a valid team name',
   ariaLabel: 'Team Name',
   value: [
-    'Developer Relations',
-    'Executive Leadership',
-    'Engineering',
-    'External Paid',
-    'Influ2',
-    'Internal Paid',
-    'Marketing',
-    'Product',
-    'Sales',
-    'Social',
+    { key: 'dr', value: 'Developer Relations' },
+    { key: 'el', value: 'Executive Leaders' },
+    { key: 'en', value: 'Engineering' },
+    { key: 'ep', value: 'External Paid' },
+    { key: 'ga', value: 'Gartner' },
+    { key: 'i2', value: 'Influ2 Ad' },
+    { key: 'ip', value: 'Internal Paid' },
+    { key: 'mk', value: 'Marketing' },
+    { key: 'pr', value: 'Product' },
+    { key: 'sa', value: 'Sales' },
+    { key: 'so', value: 'Social' },
   ],
 };
 
 export const defaultUTMRegionName: UtmObj = {
-  showName: true,
+  showName: false,
   label: 'Region',
   tooltip: 'What region will this target?',
   error: 'Please enter a valid region name',
   ariaLabel: 'Region Name',
-  value: ['North America', 'APAC', 'EMEA', 'Global'],
+  value: [
+    { key: 'na', value: 'North America' },
+    { key: 'apac', value: 'APAC' },
+    { key: 'emea', value: 'EMEA' },
+    { key: 'gl', value: 'Global' },
+  ],
 };
 
 export const defaultUTMTarget: UtmObj = {
-  showName: true,
-  label: 'Link Target',
-  tooltip: 'Where will this link point to? It should be a startree.ai link',
-  error: 'Please enter a valid URL',
-  ariaLabel: 'Where will this link point to? It should be a startree.ai link',
-  value: [''],
+  showName: false,
+  label: 'URL Parameters',
+  tooltip: 'Additional URL parameters to append to the link',
+  error: 'Please enter a valid URL Parameter',
+  ariaLabel: 'Add any additional URL parameters',
+  value: [{ key: '', value: '' }],
 };
 
 export const defaultUTMTerm: UtmObj = {
-  showName: true,
+  showName: false,
   label: 'Source',
   tooltip: `What's the Campaign Source? This would be where you're posting the link, usually.`,
   error: 'Please choose a valid source',
   ariaLabel: `What's the Campaign Source?`,
   value: [
-    'Adwords',
-    'Angel',
-    'Baidu',
-    'Bing',
-    'Discord',
-    'DuckDuckGo',
-    'Dev To',
-    'DZone',
-    'Facebook',
-    'GitHub',
-    'GitLab',
-    'Google',
-    'LinkedIn',
-    'Medium',
-    'Otta',
-    'Reddit',
-    'Simplify',
-    'Slack',
-    'Stack Overflow',
-    'Techmeme',
-    'Twitter',
-    'Youtube',
+    { key: 'adwords', value: 'Adwords' },
+    { key: 'angel', value: 'Angel' },
+    { key: 'baidu', value: 'Baidu' },
+    { key: 'bing', value: 'Bing' },
+    { key: 'discord', value: 'Discord' },
+    { key: 'duckduckgo', value: 'Duck Duck Go' },
+    { key: 'dev-to', value: 'Dev.To' },
+    { key: 'dzone', value: 'DZone' },
+    { key: 'facebook', value: 'Facebook' },
+    { key: 'github', value: 'GitHub' },
+    { key: 'gitlab', value: 'GitLab' },
+    { key: 'google', value: 'Google' },
+    { key: 'linkedin', value: 'LinkedIn' },
+    { key: 'medium', value: 'Medium' },
+    { key: 'meetup', value: 'Meetup' },
+    { key: 'otta', value: 'Otta' },
+    { key: 'reddit', value: 'Reddit' },
+    { key: 'simplify', value: 'Simplify' },
+    { key: 'slack', value: 'Slack' },
+    { key: 'stack-overflow', value: 'Stack Overflow' },
+    { key: 'techmeme', value: 'Techmeme' },
+    { key: 'twitter', value: 'Twitter' },
+    { key: 'youtube', value: 'YouTube' },
   ],
 };
 
 export const defaultUTMMedium: UtmObj = {
-  showName: true,
+  showName: false,
   label: 'Referral Type',
-  tooltip: 'What kind of referral link is this?',
+  tooltip:
+    "What kind of referral link is this? This is usually how you're distributing the link.",
   error: 'Please choose a valid referral type',
   ariaLabel: 'Referral Type',
   value: [
-    'CPC',
-    'Direct',
-    'Display',
-    'Email',
-    'Event',
-    'Organic',
-    'Paid Search',
-    'Paid Social',
-    'QR',
-    'Referral',
-    'Retargeting',
-    'Social',
-    'PPC',
+    { key: 'cpc', value: 'Cost Per Click' },
+    { key: 'direct', value: 'Direct' },
+    { key: 'display', value: 'Display' },
+    { key: 'email', value: 'Email' },
+    { key: 'event', value: 'Event' },
+    { key: 'organic', value: 'Organic' },
+    { key: 'paid-search', value: 'Paid Search' },
+    { key: 'paid-social', value: 'Paid Social' },
+    { key: 'qr', value: 'QR' },
+    { key: 'referral', value: 'Referral' },
+    { key: 'retargeting', value: 'Retargeting' },
+    { key: 'social', value: 'Social' },
+    { key: 'ppc', value: 'Pay Per Click' },
+    { key: 'linq', value: 'Linq' },
   ],
 };
 
 export const defaultUTMSource: UtmObj = {
-  showName: true,
+  showName: false,
   label: 'Referral Source',
   tooltip: 'Where will you be posting this link?',
   error: 'Please enter a valid referral source',
   ariaLabel: 'Referral Source',
-  value: [],
+  value: [{ key: '', value: '' }],
 };
 
 export const defaultUTMCampaign: UtmObj = {
-  showName: true,
+  showName: false,
   label: 'Campaign',
   tooltip: 'Enter a campaign name',
   error: 'Please enter a valid campaign name',
   ariaLabel: 'Campaign Name',
-  value: [],
+  value: [{ key: '', value: '' }],
 };
 
 export const defaultUTMParams: UtmParams = {
-  restrict_bases: false,
+  restrict_bases: true,
   show_country: true,
   utm_bases: defaultUTMBases,
   utm_campaign: defaultUTMCampaign,

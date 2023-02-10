@@ -20,12 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import { FloatingLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { UtmObj } from './types';
-import React from 'react';
+import { UtmObj, UtmKeyValue } from './types';
 
 export default function UTMChoice({
   valueChanged,
@@ -41,7 +40,7 @@ export default function UTMChoice({
   settings: UtmObj;
 }): JSX.Element {
   const [label, setLabel] = useState<string>('');
-  const [values, setValues] = useState<string[]>(['']);
+  const [values, setValues] = useState<UtmKeyValue[]>([{key: '', value: ''}]);
   const [tooltip, setTooltip] = useState<string>('');
   const [ariaLabel, setAriaLabel] = useState<string>('');
   const [errorLabel, setErrorLabel] = useState<string>('');
@@ -53,7 +52,7 @@ export default function UTMChoice({
   const ref = useRef(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  function getGroups(vals: string[]): JSX.Element[] {
+  function getGroups(vals: UtmKeyValue[]): JSX.Element[] {
     const groups: JSX.Element[] = [];
      const def = enableChoice ? 'Choose one ...' : 'Choose a Term first';
     groups.push(
@@ -61,10 +60,10 @@ export default function UTMChoice({
         {def}
       </option>
     );
-    vals.forEach((val) => {
+    vals.map((val: UtmKeyValue) => {
       groups.push(
-        <option key={`${targetType}-${val}`} value={val}>
-          {val}
+        <option key={`${targetType}-${val.key}`} id={val.key} value={val.value}>
+          {val.value}
         </option>
       );
     });
@@ -117,7 +116,7 @@ export default function UTMChoice({
               return;
             }
             valueChanged(
-              eventKey.target.value.replace(/ /g, '-').toLowerCase()
+              eventKey.target[eventKey.target.selectedIndex].id // value.replace(/ /g, '-').toLowerCase()
             );
             selectedValue(eventKey);
           }}
@@ -141,6 +140,6 @@ UTMChoice.propTypes = {
     error: PropTypes.string.isRequired,
     showName: PropTypes.bool.isRequired,
     tooltip: PropTypes.string.isRequired,
-    value: PropTypes.arrayOf(PropTypes.string).isRequired,
+    value: PropTypes.arrayOf(PropTypes.object).isRequired,
   }).isRequired,
 };

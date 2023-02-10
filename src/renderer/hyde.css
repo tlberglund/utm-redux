@@ -32,7 +32,16 @@
  */
 
 html {
-  font-family: "PT Sans", Helvetica, Arial, sans-serif;
+  font-family: Mulish, "Helvetica Neue", "Arial Nova", sans-serif !important;
+}
+body {
+  font-family: Mulish, "Helvetica Neue", "Arial Nova", sans-serif !important;
+}
+.form-select {
+  font-family: Mulish, "Helvetica Neue", "Arial Nova", sans-serif !important;
+}
+--bs-font-sans-serif {
+  font-family: Mulish, "Helvetica Neue", "Arial Nova", sans-serif !important;
 }
 @media (min-width: 48em) {
   html {
@@ -81,7 +90,7 @@ html {
 .sidebar-about h1 {
   color: #fff;
   margin-top: 0;
-  font-family: "Abril Fatface", serif;
+  font-family: Mulish, "Helvetica Neue", "Arial Nova", sans-serif;
   font-size: 3.25rem;
 }
 
@@ -201,7 +210,7 @@ a.sidebar-nav-item:focus {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: grtsk, Helvetica, Arial, sans-serif;
+  font-family: Mulish, "Helvetica Neue", "Arial Nova", sans-serif;
   font-size: 16;
 }
 .content a,

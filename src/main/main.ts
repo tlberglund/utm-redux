@@ -158,16 +158,15 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.6',
+    applicationVersion: 'v1.6.8',
     copyright: '© 2023',
-    version: 'b1025',
+    version: 'b1026',
     credits: 'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],
     website: 'https://github.com/davidgs/utm-redux',
-    iconPath: getAssetPath('icon.png')
+    iconPath: getAssetPath('icon.png'),
   };
-  app.setAboutPanelOptions(options)
-  console.log(getAssetPath('icon.png'));
+  app.setAboutPanelOptions(options);
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
