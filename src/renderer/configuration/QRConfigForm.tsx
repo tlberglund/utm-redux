@@ -21,9 +21,19 @@
  * SOFTWARE.
  */
 import React, { useState, useEffect, SyntheticEvent } from 'react';
-import { Form, Button, Modal, FloatingLabel, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import {
+  Form,
+  Button,
+  Modal,
+  Row,
+  Col,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
-const QRConfigForm = ({
+
+export default function QRConfigForm({
   show,
   size,
   exten,
@@ -37,10 +47,12 @@ const QRConfigForm = ({
   sizeCallback: (value: number) => void;
   extensionCallback: (value: string) => void;
   onHide: (value: boolean) => void;
-}) => {
+}): JSX.Element {
   const [showConfig, setShowConfig] = useState(false);
-  const [qrSize, setQrSize] = useState(100);
+  const [qrSize, setQrSize] = useState(175);
   const [qrExtension, setQrExtension] = useState('png');
+  const initSize = size;
+  const initExtension = exten;
 
   useEffect(() => {
     setShowConfig(show);
@@ -51,20 +63,18 @@ const QRConfigForm = ({
   }, [size]);
 
   useEffect(() => {
-    console.log('Extension: ', exten);
     setQrExtension(exten.toLowerCase());
   }, [exten]);
 
   const onExtensionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Extension: ', event.target.id.split('-')[2]);
     setQrExtension(event.target.id.split('-')[2]);
     extensionCallback(event.target.id.split('-')[2]);
-  }
+  };
 
   const onSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQrSize(parseInt(event.target.value));
-    sizeCallback(parseInt(event.target.value));
-  }
+    setQrSize(parseInt(event.target.value, 10));
+    sizeCallback(parseInt(event.target.value, 10));
+  };
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -74,6 +84,8 @@ const QRConfigForm = ({
   };
 
   const handleCancel = () => {
+    sizeCallback(initSize);
+    extensionCallback(initExtension);
     setShowConfig(false);
     onHide(false);
   };
@@ -140,7 +152,7 @@ const QRConfigForm = ({
               </Form.Label>
             </Col>
             <Col sm="6" style={{ paddingLeft: '1rem' }}>
-              <div key={`inline-radio`} className="mb-3">
+              <div key="inline-radio" className="mb-3">
                 <OverlayTrigger
                   placement="auto"
                   overlay={<Tooltip>Download as a PNG</Tooltip>}
@@ -150,7 +162,7 @@ const QRConfigForm = ({
                     label=".png"
                     name="group1"
                     type="radio"
-                    id={`inline-radio-png`}
+                    id="inline-radio-png"
                     style={{ marginRight: '.5rem' }}
                     onChange={(e) => {
                       onExtensionChange(e);
@@ -167,7 +179,7 @@ const QRConfigForm = ({
                     label=".jpg"
                     name="group1"
                     type="radio"
-                    id={`inline-radio-jpg`}
+                    id="inline-radio-jpg"
                     style={{ marginRight: '.5rem' }}
                     onChange={onExtensionChange}
                     checked={qrExtension === 'jpg'}
@@ -193,6 +205,13 @@ const QRConfigForm = ({
       </Modal.Body>
     </Modal>
   );
-};
+}
 
-export default QRConfigForm;
+QRConfigForm.propTypes = {
+  show: PropTypes.bool.isRequired,
+  size: PropTypes.number.isRequired,
+  exten: PropTypes.string.isRequired,
+  sizeCallback: PropTypes.func.isRequired,
+  extensionCallback: PropTypes.func.isRequired,
+  onHide: PropTypes.func.isRequired,
+};

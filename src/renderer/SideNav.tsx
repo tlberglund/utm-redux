@@ -20,12 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React from 'react';
 import './hyde.css';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PasswordForm from './configuration/PasswordForm';
-import StarTree  from '../../assets/images/ST_Logo_WhiteYellow.svg';
+import StarTree from '../../assets/images/ST_Logo_WhiteYellow.svg';
 
 export default function SideNav({
   showConfig,
@@ -51,29 +50,31 @@ export default function SideNav({
       <aside className="theme-base-09 sidebar">
         <p />
         <p />
-        <a
-          href="https://startree.ai/"
-          target="_blank"
-          rel="utm_builder noreferrer"
-        >
+        <a href="https://startree.ai/" target="_blank" rel="noreferrer">
           <img src={StarTree} alt="StarTree Logo" />
         </a>
         <div className="container sidebar-sticky">
           <div className="sidebar-about">
             <p className="sidebar-lead">A Content Referral Link Generator</p>
             <div>
-              <p className="lead">Need changes to options?<br />
-              <span className="sidebar-contact">Contact <a href="mailto:davidgs@startree.ai?Subject=UTM Link Builder">David G. Simmons</a></span></p></div>
+              <p className="lead">
+                Need changes to options?
+                <br />
+                <span className="sidebar-contact">
+                  Contact{' '}
+                  <a href="mailto:davidgs@startree.ai?Subject=UTM Link Builder">
+                    David G. Simmons
+                  </a>
+                </span>
+              </p>
+            </div>
             <div>
               <p className="sidebar-credit">Brought to you by:</p>
-              <p style={{textAlign: "center"}}>
+              <p style={{ textAlign: 'center' }}>
                 <a href="mailto:davidgs@davidgs.com">David G. Simmons</a> &{' '}
                 <br />
-                The <a
-                  href="https://startree.ai/"
-                  target="_blank"
-                  rel="utm_builder noreferrer"
-                >
+                The{' '}
+                <a href="https://startree.ai/" target="_blank" rel="noreferrer">
                   StarTree
                 </a>{' '}
                 <strong>Developer Relations Team</strong>
@@ -113,7 +114,6 @@ export default function SideNav({
                     checked={enableConfig}
                     onChange={(e) => {
                       passwdVisible(e.target.checked);
-                      // callback(e.target.checked);
                     }}
                   />
                 </OverlayTrigger>

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import {
   FloatingLabel,
@@ -30,8 +30,6 @@ import {
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { UtmObj } from './types';
-import React from 'react';
-
 
 function UTMTextField({
   valueChanged,
@@ -49,7 +47,6 @@ function UTMTextField({
   const [errorLabel, setErrorLabel] = useState<string>('');
   const [showName, setShowName] = useState<boolean>(false);
   const [tooltip, setTooltip] = useState<string>('');
-  const [validated, setValidated] = useState<boolean>(false);
   const [enableChoice, setEnableChoice] = useState<boolean>(true);
   const [tType, setTType] = useState<string>(targetType);
   const [qrOnlyState, setQrOnlyState] = useState<boolean>(qrOnly);
@@ -71,6 +68,7 @@ function UTMTextField({
       .catch((error: unknown) => {
         console.log(`Error: ${error}`);
       });
+    setTType(targetType);
   }, [targetType]);
 
   useEffect(() => {
@@ -84,18 +82,16 @@ function UTMTextField({
   return (
     <>
       <OverlayTrigger placement="top" overlay={<Tooltip>{tooltip}</Tooltip>}>
-        <FloatingLabel
-          label={{ showName } ? `${label} (${tType})` : `${label}`}
-        >
+        <FloatingLabel label={showName ? `${label} (${tType})` : `${label}`}>
           <FormControl
             required
-            disabled={!enableMe}
+            disabled={!enableChoice}
             ref={ref}
             id={`${targetType}-target`}
             aria-label={ariaLabel}
             aria-describedby={tooltip}
             onChange={(eventKey) => {
-              if(!qrOnlyState){
+              if (!qrOnlyState) {
                 valueChanged(
                   eventKey.target.value.replace(/ /g, '-').toLowerCase()
                 );

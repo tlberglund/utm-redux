@@ -22,13 +22,15 @@
  */
 import PropTypes from 'prop-types';
 import Pill from './Pill';
+import { UtmKeyValue } from '../../types';
+import React from 'react';
 
 export default function PillArea({
   pills,
   type,
   callback,
 }: {
-  pills: string[];
+  pills: UtmKeyValue[];
   type: string;
   callback: (value: string, type: string) => void;
 }): JSX.Element {
@@ -41,10 +43,10 @@ export default function PillArea({
       {pills.map((pill, _id) => {
         return (
           <Pill
-            id={`${pill}-${type}`}
-            key={`${pill}-${type}`}
+            id={`${pill.key}-${type}`}
+            key={`${pill.key}-${type}`}
             type={type}
-            value={pill}
+            value={pill.value}
             callback={removePill}
           />
         );
@@ -54,7 +56,7 @@ export default function PillArea({
 }
 
 PillArea.propTypes = {
-  pills: PropTypes.arrayOf(PropTypes.string).isRequired,
+  pills: PropTypes.arrayOf(PropTypes.object).isRequired,
   type: PropTypes.string.isRequired,
   callback: PropTypes.func.isRequired,
 };

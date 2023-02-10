@@ -65,6 +65,7 @@ declare global {
       getParams: (key: string) => Promise<string>;
       saveConfig: (key: string) => Promise<string>;
       checkPass: () => Promise<string>;
+      clearForm: () => Promise<string>;
     };
   }
 }

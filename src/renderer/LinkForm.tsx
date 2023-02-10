@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   FloatingLabel,
@@ -33,29 +33,24 @@ import {
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
-import CountrySelect, {ICountry} from 'react-bootstrap-country-select';
+import CountrySelect, { ICountry } from 'react-bootstrap-country-select';
 import UTMTextField from './UTMTextField';
 import UTMChoice from './UTMChoice';
-import UTMChoiceShorten from './UTMChoiceShorten';
-import { BitlyConfig, defaultBitlyConfig, defaultUTMParams, UtmParams } from './types';
+import {
+  BitlyConfig,
+  defaultBitlyConfig,
+  defaultUTMParams,
+  UtmParams,
+} from './types';
 import BitlyCheck from './BitlyCheck';
 import QCode from './QRCode';
-import ConfigEditor from './configuration/ConfigEditor';
 import 'react-bootstrap-country-select/dist/react-bootstrap-country-select.css';
-import React from 'react';
 
-export default function LinkForm({
-  showConfig,
-  callback,
-}: {
-  showConfig: boolean;
-  callback: (value: boolean) => void;
-}): JSX.Element {
+export default function LinkForm(): JSX.Element {
   const [campaign, setCampaign] = useState('');
   const [finalCampaign, setFinalCampaign] = useState('');
   const [medium, setMedium] = useState('');
   const [source, setSource] = useState('');
-  const [term, setTerm] = useState('');
   const [restrictBases, setRestrictBases] = useState(true);
   const [showCountry, setShowCountry] = useState(false);
   const [base, setBase] = useState('');
@@ -67,22 +62,21 @@ export default function LinkForm({
   const [longLink, setLongLink] = useState('');
   const [shortLink, setShortLink] = useState('');
   const [useBitly, setUseBitly] = useState(false);
-  const [bitlyConfig, setBitlyConfig] = useState<BitlyConfig>(defaultBitlyConfig);
+  const [bitlyConfig, setBitlyConfig] =
+    useState<BitlyConfig>(defaultBitlyConfig);
   const [enableBitly, setEnableBitly] = useState(false);
-  const [editConfig, setEditConfig] = useState(false);
   const [mainConfig, setMainConfig] = useState(defaultUTMParams);
   const [qrOnly, setQrOnly] = useState(false);
 
   const clearForm = (): void => {
-    window.electronAPI.clearForm(null)
-      .then((response: string) => {
-        console.log('cleared form');
+    window.electronAPI
+      .clearForm()
+      .then(() => {
         return '';
       })
       .catch((error: unknown) => {
         console.log(`Error: ${error}`);
-      }
-      );
+      });
   };
 
   useEffect(() => {
@@ -101,28 +95,11 @@ export default function LinkForm({
   }, [restrictBases]);
 
   useEffect(() => {
-    setEditConfig(showConfig);
-    if (!showConfig) {
-      window.electronAPI
-        .getParams('bitly_config')
-        .then((response: string) => {
-          const c: BitlyConfig = JSON.parse(response);
-          setBitlyConfig(c);
-          setUseBitly(c.bitlyEnabled);
-          return '';
-        })
-        .catch((error: unknown) => {
-          console.log(`Error: ${error}`);
-        });
-    }
-  }, [showConfig]);
-
-  useEffect(() => {
     if (qrOnly) {
       setLongLink(target);
     } else {
       let ll = '';
-      const regex = new RegExp('(^http[s]*://)|(^ftp[s]*://)');
+      const regex = /(^http[s]*:\/\/)|(^ftp[s]*:\/\/)/;
       if (base !== '' && target === 'https://www.example.com/') {
         setTarget('');
       }
@@ -153,9 +130,6 @@ export default function LinkForm({
       if (finalCampaign !== '') {
         ll = `${ll}&utm_campaign=${finalCampaign}`;
       }
-      // if (term !== '') {
-      //   ll = `${ll}&utm_term=${term}`;
-      // }
       setLongLink(ll);
       if (base === 'choose_one_...') {
         setBase('');
@@ -166,11 +140,11 @@ export default function LinkForm({
     base,
     target,
     source,
-    // term,
     finalCampaign,
     medium,
     longLink,
     restrictBases,
+    qrOnly,
   ]);
 
   useEffect(() => {
@@ -208,38 +182,37 @@ export default function LinkForm({
   };
 
   useEffect(() => {
-    let temp_campaign = '';
+    let tempCampaign = '';
     if (team !== '') {
-      temp_campaign = `${team}_`;
+      tempCampaign = `${team}_`;
     }
     if (campaign !== '') {
-      temp_campaign = `${temp_campaign}${campaign}_`;
+      tempCampaign = `${tempCampaign}${campaign}_`;
     }
     if (region !== '') {
-      temp_campaign = `${temp_campaign}${region}_`;
+      tempCampaign = `${tempCampaign}${region}_`;
     }
     if (countryID !== '') {
-      temp_campaign = `${temp_campaign}${countryID}_`;
+      tempCampaign = `${tempCampaign}${countryID}_`;
     }
-    const t = temp_campaign.endsWith('_')
-      ? temp_campaign.slice(0, -`_`.length)
-      : temp_campaign;
+    const t = tempCampaign.endsWith('_')
+      ? tempCampaign.slice(0, -`_`.length)
+      : tempCampaign;
     setFinalCampaign(t);
-  }, [team,  region, countryID, campaign]); //term,
+  }, [team, region, countryID, campaign]);
 
   useEffect(() => {
     if (
-        target !== 'https://www.example.com/' &&
-        source !== '' &&
-        medium !== '' &&
-        campaign !== '' //&&
-        // term !== ''
-      ) {
-        setEnableBitly(true);
-      } else {
-        setEnableBitly(false);
-      }
-  }, [target, source, medium, campaign]); //term,
+      target !== 'https://www.example.com/' &&
+      source !== '' &&
+      medium !== '' &&
+      campaign !== ''
+    ) {
+      setEnableBitly(true);
+    } else {
+      setEnableBitly(false);
+    }
+  }, [target, source, medium, campaign]);
 
   useEffect(() => {
     if (bitlyConfig.bitlyEnabled) {
@@ -248,8 +221,7 @@ export default function LinkForm({
         target !== 'https://www.example.com/' &&
         source !== '' &&
         medium !== '' &&
-        campaign !== '' //&&
-        // term !== ''
+        campaign !== ''
       ) {
         const headers = {
           Authorization: `Bearer ${bitlyConfig.bitlyToken}`,
@@ -273,21 +245,16 @@ export default function LinkForm({
     }
   }, [bitlyConfig, longLink, target, source, medium, campaign]); // , term
 
-  const closeConfig = () => {
-    setEditConfig(false);
-    callback(false);
-    setRestrictBases(!mainConfig.restrict_bases);
-  };
-
   const updateCountry = (countryIdOrCountry: string | ICountry) => {
     if (countryIdOrCountry === null) {
       setCountryID('');
       const c: ICountry = {
-        id: '', name: '',
+        id: '',
+        name: '',
         flag: '',
         alpha2: '',
         alpha3: '',
-        ioc: ''
+        ioc: '',
       };
       setCountry(c);
       return;
@@ -303,42 +270,69 @@ export default function LinkForm({
       <div>
         <QCode
           link={!useBitly ? longLink : shortLink}
-          ext="PNG"
+          ext="png"
           qrOnly={qrOnly}
         />
       </div>
       <Row>
         {!qrOnly && (
-          <Col sm={2} style={{ width: '20%' }}>
-            <BitlyCheck
-              targetType="bitly_config"
-              useMe={useBitly}
-              bitlyEnabled={enableBitly}
-              valueChanged={setUseBitly}
+          <OverlayTrigger
+            placement="auto"
+            overlay={
+              <Tooltip id="bitly-tooltip">
+                Use StarTree Bitly Link-shortener
+              </Tooltip>
+            }
+          >
+            <Col sm={2} style={{ width: '20%' }}>
+              <BitlyCheck
+                targetType="bitly_config"
+                useMe={useBitly}
+                bitlyEnabled={enableBitly}
+                valueChanged={setUseBitly}
+              />
+            </Col>
+          </OverlayTrigger>
+        )}
+        <OverlayTrigger
+          placement="auto"
+          overlay={
+            <Tooltip id="qr-only-tooltip">
+              Just generate a QR Code with no UTM parameters.
+            </Tooltip>
+          }
+        >
+          <Col sm={3}>
+            <Form.Check
+              type="checkbox"
+              id="qr-only-show"
+              label="QR Code Only"
+              checked={qrOnly}
+              style={{ float: 'left' }}
+              onChange={(e) => {
+                setQrOnly(e.target.checked);
+              }}
             />
           </Col>
-        )}
-        <Col sm={3}>
-          <Form.Check
-            type="checkbox"
-            id="qr-only-show"
-            label="QR Code Only"
-            checked={qrOnly}
-            style={{ float: 'left' }}
-            onChange={(e) => {
-              setQrOnly(e.target.checked);
-            }}
-          />
-        </Col>
+        </OverlayTrigger>
         <Col sm={6} style={{ textAlign: 'right', float: 'right' }}>
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={clearForm}
-            style={{ float: 'right', marginRight: '-30px' }}
+          <OverlayTrigger
+            placement="auto"
+            overlay={
+              <Tooltip id="clear-btn-tooltip">
+                Clear the form and start over.
+              </Tooltip>
+            }
           >
-            Clear Form
-          </Button>
+            <Button
+              size="sm"
+              variant="outline-primary"
+              onClick={clearForm}
+              style={{ float: 'right', marginRight: '-30px' }}
+            >
+              Clear Form
+            </Button>
+          </OverlayTrigger>
         </Col>
       </Row>
       {/* utm_target */}
@@ -409,7 +403,7 @@ export default function LinkForm({
       <Row>
         <Col sm={showCountry ? 4 : 6} style={{ marginTop: '.75rem' }}>
           <InputGroup className="mb-3" size="lg">
-            <UTMChoiceShorten
+            <UTMChoice
               valueChanged={updateTeam}
               targetType="utm_campaign_team"
               enabled={!qrOnly}
@@ -420,7 +414,7 @@ export default function LinkForm({
         </Col>
         <Col sm={showCountry ? 4 : 6} style={{ marginTop: '.75rem' }}>
           <InputGroup className="mb-3" size="lg">
-            <UTMChoiceShorten
+            <UTMChoice
               valueChanged={updateRegion}
               targetType="utm_campaign_region"
               enabled={!qrOnly}
@@ -429,15 +423,6 @@ export default function LinkForm({
             />
           </InputGroup>
         </Col>
-        {/* <Row>
-        <InputGroup className="mb-3" size="lg">
-          <UTMTextField
-            valueChanged={setSource}
-            targetType="utm_source"
-            enableMe
-          />
-        </InputGroup>
-      </Row> */}
         {showCountry && (
           <Col sm={4} style={{ marginTop: '1rem' }}>
             <CountrySelect
@@ -461,7 +446,7 @@ export default function LinkForm({
                 <FormControl
                   required
                   disabled
-                  id={`final-campaign-target`}
+                  id="final-campaign-target"
                   aria-label="Final Campaign Value (Read Only)"
                   aria-describedby="Final Campaign Value (Read Only)"
                   value={finalCampaign}
@@ -471,17 +456,11 @@ export default function LinkForm({
             <Form.Control.Feedback type="invalid">
               This value is auto-generated
             </Form.Control.Feedback>
-            {/* <UTMTextField
-            valueChanged={setCampaign}
-            targetType="utm_campaign"
-            value={campaign}
-            enableMe={false}
-          /> */}
           </InputGroup>
         </Col>
       </Row>
-      <p></p>
-      <ConfigEditor showMe={editConfig} callback={closeConfig} />
+      <p />
+      {/* <ConfigEditor showMe={editConfig} callback={closeConfig} /> */}
     </div>
   );
 }

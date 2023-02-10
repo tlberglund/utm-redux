@@ -21,11 +21,10 @@
  * SOFTWARE.
  */
 import Form from 'react-bootstrap/Form';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { OverlayTrigger, Tooltip, Overlay } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { BitlyConfig } from './types';
-import React from 'react';
 
 export default function BitlyCheck({
   useMe,
@@ -71,7 +70,7 @@ export default function BitlyCheck({
         aria-label={ariaLabel}
         checked={useMe}
         disabled={!bitlyEnabled}
-        style={{float: 'left'}}
+        style={{ float: 'left' }}
         onChange={(e) => {
           valueChanged(e.target.checked);
         }}

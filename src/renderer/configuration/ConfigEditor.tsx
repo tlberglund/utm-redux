@@ -27,7 +27,7 @@ import Button from 'react-bootstrap/Button';
 import { Accordion, Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Pill from './pills/Pill';
-import { UtmParams, defaultUTMParams } from '../types';
+import { UtmParams, defaultUTMParams, UtmObj, UtmKeyValue } from '../types';
 import PillArea from './pills/PillArea';
 
 export default function ConfigEditor({
@@ -69,61 +69,96 @@ export default function ConfigEditor({
   const deletePillValue = (value: string, type: string) => {
     switch (type) {
       case 'utm_target':
-        const newTar = config.utm_bases.value.filter((p) => p !== value);
+        const newB = Object.entries(config.utm_bases);
+        const bLen = newB.length;
+        const entries: UtmKeyValue[] = newB[bLen - 1][1];
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].value == value) {
+            entries.splice(i, 1);
+          }
+        }
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newBase = {
             ...newConfig.utm_bases,
           };
-          newBase.value = newTar;
+          newBase.value = entries;
           newConfig.utm_bases = newBase;
           return newConfig;
         });
         break;
       case 'utm_term':
-        const newTrm = config.utm_term.value.filter((p) => p !== value);
+        const newT = Object.entries(config.utm_term);
+        const tLen = newT.length;
+        const tEntries: UtmKeyValue[] = newT[tLen - 1][1];
+        for (var i = 0; i < tEntries.length; i++) {
+          if (tEntries[i].value == value) {
+            tEntries.splice(i, 1);
+          }
+        }
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTerm = {
             ...newConfig.utm_term,
           };
-          newTerm.value = newTrm;
+          newTerm.value = tEntries;
           newConfig.utm_term = newTerm;
           return newConfig;
         });
         break;
       case 'utm_medium':
-        const newMeds = config.utm_medium.value.filter((p) => p !== value);
+        const newM = Object.entries(config.utm_medium);
+        const mLen = newM.length;
+        const mEntries: UtmKeyValue[] = newM[mLen - 1][1];
+        for (var i = 0; i < mEntries.length; i++) {
+          if (mEntries[i].value == value) {
+            mEntries.splice(i, 1);
+          }
+        }
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newMed = {
             ...newConfig.utm_medium,
           };
-          newMed.value = newMeds;
+          newMed.value = mEntries;
           newConfig.utm_medium = newMed;
           return newConfig;
         });
         break;
       case 'team_name':
-        const newTeams = config.team_name.value.filter((p) => p !== value);
+        const newTea = Object.entries(config.team_name);
+        const len = newTea.length;
+        const teaEntries: UtmKeyValue[] = newTea[len - 1][1];
+        for (var i = 0; i < teaEntries.length; i++) {
+          if (teaEntries[i].value == value) {
+            teaEntries.splice(i, 1);
+          }
+        }
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTeam = {
             ...newConfig.team_name,
           };
-          newTeam.value = newTeams;
+          newTeam.value = teaEntries;
           newConfig.team_name = newTeam;
           return newConfig;
         });
         break;
       case 'region_name':
-        const newReg = config.region_name.value.filter((p) => p !== value);
+        const newReg = Object.entries(config.region_name);
+        const gLen = newReg.length;
+        const rEntries: UtmKeyValue[] = newReg[gLen - 1][1];
+        for (var i = 0; i < rEntries.length; i++) {
+          if (rEntries[i].value == value) {
+            rEntries.splice(i, 1);
+          }
+        }
         setConfig((prevConfig) => {
           const newConfig = { ...prevConfig };
           const newTeam = {
             ...newConfig.region_name,
           };
-          newTeam.value = newTeams;
+          newTeam.value = rEntries;
           newConfig.region_name = newTeam;
           return newConfig;
         });
