@@ -26,6 +26,7 @@ import React, { useState } from 'react';
 import MainHeader from './MainHeader';
 import SideNav from './SideNav';
 import LinkForm from './LinkForm';
+import ConfigEditor from './configuration/ConfigEditor';
 
 export default function MainPage() {
   const [editConfig, setEditConfig] = useState(false);
@@ -33,12 +34,13 @@ export default function MainPage() {
   return (
     <div className="content">
       <div className="aside-column">
-        <SideNav showConfig={editConfig} callback={setEditConfig} />
+        <SideNav callback={setEditConfig} />
       </div>
       <div className="main-column">
         <MainHeader />
         <LinkForm />
       </div>
+      <ConfigEditor showMe={editConfig} />
     </div>
   );
 }

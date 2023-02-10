@@ -147,8 +147,13 @@ export default function LinkForm(): JSX.Element {
     qrOnly,
   ]);
 
+  useEffect (() => {
+    console.log('Restrict Bases', restrictBases);
+  }, [restrictBases]);
+
   useEffect(() => {
     if (qrOnly) {
+      console.log('QR Only', qrOnly);
       setShowCountry(false);
       setRestrictBases(false);
     }
@@ -339,7 +344,7 @@ export default function LinkForm(): JSX.Element {
       <Row style={{ marginTop: '.5rem' }}>
         <InputGroup className="mb-3" size="lg">
           <Col sm={4}>
-            {restrictBases && (
+            {restrictBases && !qrOnly && (
               <UTMChoice
                 valueChanged={setBase}
                 targetType="utm_bases"
@@ -349,12 +354,14 @@ export default function LinkForm(): JSX.Element {
               />
             )}
           </Col>
-          <Col sm={restrictBases ? 8 : 12}>
+          <Col sm={restrictBases && !qrOnly ? 8 : 12}>
             <UTMTextField
               valueChanged={setTarget}
               targetType="utm_target"
               enableMe={
-                !restrictBases || (base !== '' && base !== 'choose_one_...')
+                !restrictBases ||
+                qrOnly ||
+                (base !== '' && base !== 'choose_one_...')
               }
               qrOnly={qrOnly}
             />
@@ -429,6 +436,7 @@ export default function LinkForm(): JSX.Element {
               value={country as ICountry}
               valueAs="object"
               size="lg"
+              disabled={qrOnly}
               onChange={updateCountry}
               onTextChange={updateCountry}
             />
@@ -460,7 +468,7 @@ export default function LinkForm(): JSX.Element {
         </Col>
       </Row>
       <p />
-      {/* <ConfigEditor showMe={editConfig} callback={closeConfig} /> */}
+      {/*  */}
     </div>
   );
 }

@@ -82,7 +82,16 @@ function UTMTextField({
   return (
     <>
       <OverlayTrigger placement="top" overlay={<Tooltip>{tooltip}</Tooltip>}>
-        <FloatingLabel label={showName ? `${label} (${tType})` : `${label}`}>
+        <FloatingLabel
+          label={
+            // eslint-disable-next-line no-nested-ternary
+            qrOnly
+              ? `Enter Data to encode`
+              : showName
+              ? `${label} (${tType})`
+              : `${label}`
+          }
+        >
           <FormControl
             required
             disabled={!enableChoice}

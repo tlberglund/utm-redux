@@ -25,13 +25,13 @@ import { Form, Button, Modal, FloatingLabel, Row, Col } from 'react-bootstrap';
 import jsSHA from 'jssha';
 
 
-const PasswordForm = ({
+function PasswordForm ({
   show,
   callback,
 }: {
   show: boolean;
   callback: (value: boolean) => void;
-}) => {
+}): JSX.Element {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
