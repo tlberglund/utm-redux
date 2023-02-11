@@ -39,16 +39,25 @@ export default function SideNav({
 
   return (
     // eslint-disable-next-line react/jsx-filename-extension
-    <div>
-      <aside className="theme-base-09 sidebar">
-        <p />
-        <p />
-        <a href="https://startree.ai/" target="_blank" rel="noreferrer">
-          <img src={StarTree} alt="StarTree Logo" />
-        </a>
+      <div>
+        <aside className="theme-base-09 sidebar">
+          <p />
+          <p />
+          <span style={{
+            textAlign: 'center', marginLeft: '2rem'}}> <a href="https://startree.ai/" target="_blank" rel="noreferrer">
+              <img src={StarTree} alt="StarTree Logo" width='75%' />
+            </a>
+           </span>
+           <p />
+           <div className="sidebar-about">
+            <p className="sidebar-lead">Content Referral Link
+            <br />& QR Code Generator</p>
+
+            </div>
         <div className="container sidebar-sticky">
           <div className="sidebar-about">
-            <p className="sidebar-lead">A Content Referral Link Generator</p>
+            {/* <p className="sidebar-lead">A Content Referral Link
+            <br />& QR Code Generator</p> */}
             <div>
               <p className="lead">
                 Need changes to options?
@@ -63,11 +72,8 @@ export default function SideNav({
             </div>
             <div>
               <p className="sidebar-credit">Brought to you by:</p>
-              <p style={{ textAlign: 'center' }}>
-                <a href="mailto:davidgs@davidgs.com">David G. Simmons</a> &{' '}
-                <br />
-                The{' '}
-                <a href="https://startree.ai/" target="_blank" rel="noreferrer">
+              <p>
+                The <a href="https://startree.ai/" target="_blank" rel="noreferrer">
                   StarTree
                 </a>{' '}
                 <strong>Developer Relations Team</strong>
@@ -77,25 +83,23 @@ export default function SideNav({
           <nav>
             <ul className="sidebar-nav">
               <li>
-                <a href="https://davidgs.com">Home</a>{' '}
+                • <a href="https://davidgs.com">Home</a>{' '}
               </li>
               <li>
-                <a href="https://github.com/davidgs/"> Github </a>
+                • <a href="https://github.com/davidgs/"> Github </a>
               </li>
             </ul>
           </nav>
-          <p>&copy; David G. Simmons 2023</p>
-          <p>All rights reserved</p>
+          <p>&copy; David G. Simmons 2023<br />
+          All rights reserved</p>
           <Form>
             <Row>
               <Col>
                 <OverlayTrigger
                   placement="right"
-                  overlay={
-                    <Tooltip id="config-tooltip">
-                      Edit the Configuration
-                    </Tooltip>
-                  }
+                  overlay={<Tooltip id="config-tooltip">
+                    Edit the Configuration
+                  </Tooltip>}
                 >
                   <Form.Check
                     type="switch"
@@ -107,21 +111,18 @@ export default function SideNav({
                     checked={showPasswd}
                     onChange={(e) => {
                       passwdVisible(e.target.checked);
-                    }}
-                  />
+                    } } />
                 </OverlayTrigger>
               </Col>
             </Row>
           </Form>
         </div>
-      </aside>
-      <PasswordForm
+      </aside><PasswordForm
         show={showPasswd}
         callback={(value: boolean) => {
           callback(value);
           setShowPasswd(false);
-        }}
-      />
+        } } />
     </div>
   );
 }

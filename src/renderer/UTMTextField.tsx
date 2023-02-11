@@ -94,6 +94,7 @@ function UTMTextField({
         >
           <FormControl
             required
+            type="text"
             disabled={!enableChoice}
             ref={ref}
             id={`${targetType}-target`}

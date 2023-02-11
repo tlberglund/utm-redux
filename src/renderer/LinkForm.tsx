@@ -279,8 +279,7 @@ export default function LinkForm(): JSX.Element {
           qrOnly={qrOnly}
         />
       </div>
-      <Row>
-        {!qrOnly && (
+      <Row style={{marginBottom: '.25rem'}}>
           <OverlayTrigger
             placement="auto"
             overlay={
@@ -298,7 +297,6 @@ export default function LinkForm(): JSX.Element {
               />
             </Col>
           </OverlayTrigger>
-        )}
         <OverlayTrigger
           placement="auto"
           overlay={
@@ -309,7 +307,7 @@ export default function LinkForm(): JSX.Element {
         >
           <Col sm={3}>
             <Form.Check
-              type="checkbox"
+              type="switch"
               id="qr-only-show"
               label="QR Code Only"
               checked={qrOnly}
@@ -341,7 +339,7 @@ export default function LinkForm(): JSX.Element {
         </Col>
       </Row>
       {/* utm_target */}
-      <Row style={{ marginTop: '.5rem' }}>
+      <Row style={{ marginBottom: '-.5rem' }}>
         <InputGroup className="mb-3" size="lg">
           <Col sm={4}>
             {restrictBases && !qrOnly && (
@@ -369,7 +367,7 @@ export default function LinkForm(): JSX.Element {
         </InputGroup>
       </Row>
       {/* utm_source */}
-      <Row>
+      <Row style={{ marginBottom: '-.5rem' }}>
         <Col sm={12}>
           <InputGroup className="mb-3" size="lg">
             <UTMChoice
@@ -383,7 +381,7 @@ export default function LinkForm(): JSX.Element {
         </Col>
       </Row>
       {/* utm_medium */}
-      <Row>
+      <Row style={{ marginBottom: '-.5rem' }}>
         <Col sm={12}>
           <InputGroup className="mb-3" size="lg">
             <UTMChoice
@@ -397,7 +395,7 @@ export default function LinkForm(): JSX.Element {
         </Col>
       </Row>
       {/* utm_source */}
-      <Row>
+      <Row >
         <Col sm={12}>
           <UTMTextField
             valueChanged={setCampaign}
@@ -407,8 +405,8 @@ export default function LinkForm(): JSX.Element {
           />
         </Col>
       </Row>
-      <Row>
-        <Col sm={showCountry ? 4 : 6} style={{ marginTop: '.75rem' }}>
+      <Row style={{ marginTop: '.5rem', marginBottom: '-.5rem' }}>
+        <Col sm={showCountry ? 4 : 6}>
           <InputGroup className="mb-3" size="lg">
             <UTMChoice
               valueChanged={updateTeam}
@@ -419,7 +417,7 @@ export default function LinkForm(): JSX.Element {
             />
           </InputGroup>
         </Col>
-        <Col sm={showCountry ? 4 : 6} style={{ marginTop: '.75rem' }}>
+        <Col sm={showCountry ? 4 : 6} >
           <InputGroup className="mb-3" size="lg">
             <UTMChoice
               valueChanged={updateRegion}
@@ -431,7 +429,7 @@ export default function LinkForm(): JSX.Element {
           </InputGroup>
         </Col>
         {showCountry && (
-          <Col sm={4} style={{ marginTop: '1rem' }}>
+          <Col sm={4} style={{ marginTop: '.3rem' }}>
             <CountrySelect
               value={country as ICountry}
               valueAs="object"
