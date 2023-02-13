@@ -27,18 +27,16 @@ export default function MainHeader() {
     <main className="content">
       <div className="posts">
         <article className="post">
-          <h1
+          <h4
             className="post-title header-stuff"
             style={{ textAlign: 'center' }}
-          >
-            Referral Link & QR Code Generator
-          </h1>
-          <h4 className="header-stuff" style={{ textAlign: 'center' }}>
+          >UTM Link Builder and QR Code Generator
+          </h4>
+          <p className="header-stuff" style={{ textAlign: 'center' }}>
             Posting a link back to a web resource?
-          </h4>
-          <h4 className="header-stuff" style={{ textAlign: 'center' }}>
+          <br />
             Create a trackable link and make it count!
-          </h4>
+          </p>
         </article>
       </div>
     </main>

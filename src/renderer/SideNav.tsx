@@ -39,21 +39,21 @@ export default function SideNav({
 
   return (
     // eslint-disable-next-line react/jsx-filename-extension
-      <div>
-        <aside className="theme-base-09 sidebar">
-          <p />
-          <p />
-          <span style={{
-            textAlign: 'center', marginLeft: '2rem'}}> <a href="https://startree.ai/" target="_blank" rel="noreferrer">
-              <img src={StarTree} alt="StarTree Logo" width='75%' />
-            </a>
-           </span>
-           <p />
-           <div className="sidebar-about">
-            <p className="sidebar-lead">Content Referral Link
-            <br />& QR Code Generator</p>
+    <div>
+      <aside className="theme-base-09 sidebar">
+        <p />
+        <p />
 
-            </div>
+          <a href="https://startree.ai/" target="_blank" rel="noreferrer">
+            <img src={StarTree} alt="StarTree Logo" width="75%" />
+          </a>
+        <p />
+        {/* <div className="sidebar-about">
+          <p className="sidebar-lead">
+            Content Referral Link
+            <br />& QR Code Generator
+          </p>
+        </div> */}
         <div className="container sidebar-sticky">
           <div className="sidebar-about">
             {/* <p className="sidebar-lead">A Content Referral Link
@@ -73,7 +73,8 @@ export default function SideNav({
             <div>
               <p className="sidebar-credit">Brought to you by:</p>
               <p>
-                The <a href="https://startree.ai/" target="_blank" rel="noreferrer">
+                The{' '}
+                <a href="https://startree.ai/" target="_blank" rel="noreferrer">
                   StarTree
                 </a>{' '}
                 <strong>Developer Relations Team</strong>
@@ -90,16 +91,21 @@ export default function SideNav({
               </li>
             </ul>
           </nav>
-          <p>&copy; David G. Simmons 2023<br />
-          All rights reserved</p>
+          <p>
+            &copy; David G. Simmons 2023
+            <br />
+            All rights reserved
+          </p>
           <Form>
             <Row>
               <Col>
                 <OverlayTrigger
                   placement="right"
-                  overlay={<Tooltip id="config-tooltip">
-                    Edit the Configuration
-                  </Tooltip>}
+                  overlay={
+                    <Tooltip id="config-tooltip">
+                      Edit the Configuration
+                    </Tooltip>
+                  }
                 >
                   <Form.Check
                     type="switch"
@@ -111,18 +117,21 @@ export default function SideNav({
                     checked={showPasswd}
                     onChange={(e) => {
                       passwdVisible(e.target.checked);
-                    } } />
+                    }}
+                  />
                 </OverlayTrigger>
               </Col>
             </Row>
           </Form>
         </div>
-      </aside><PasswordForm
+      </aside>
+      <PasswordForm
         show={showPasswd}
         callback={(value: boolean) => {
           callback(value);
           setShowPasswd(false);
-        } } />
+        }}
+      />
     </div>
   );
 }
