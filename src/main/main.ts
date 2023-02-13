@@ -157,9 +157,9 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.10',
+    applicationVersion: 'v1.6.11',
     copyright: '© 2023',
-    version: 'b1029',
+    version: 'b1030',
     credits:
       'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],
@@ -170,7 +170,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 980,
+    height: 800,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
