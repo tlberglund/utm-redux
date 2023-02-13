@@ -159,7 +159,7 @@ const createWindow = async () => {
     applicationName: 'UTM Builder',
     applicationVersion: 'v1.6.11',
     copyright: '© 2023',
-    version: 'b1030',
+    version: 'b1031',
     credits:
       'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],
