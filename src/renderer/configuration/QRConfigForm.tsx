@@ -30,61 +30,68 @@ import {
   OverlayTrigger,
   Tooltip,
 } from 'react-bootstrap';
+import { QRSettings, defaultQRSettings } from 'renderer/types';
 import PropTypes from 'prop-types';
-
 
 export default function QRConfigForm({
   show,
-  size,
-  exten,
+  qrSettings,
   sizeCallback,
   extensionCallback,
   onHide,
 }: {
   show: boolean;
-  size: number;
-  exten: string;
-  sizeCallback: (value: number) => void;
+  qrSettings: QRSettings;
+  sizeCallback: (size: number) => void;
   extensionCallback: (value: string) => void;
   onHide: (value: boolean) => void;
 }): JSX.Element {
-  const [showConfig, setShowConfig] = useState(false);
-  const [qrSize, setQrSize] = useState(175);
-  const [qrExtension, setQrExtension] = useState('png');
-  const initSize = size;
-  const initExtension = exten;
+  const [showConfig, setShowConfig] = useState<boolean>(false);
+  const [myQRSettings, setMyQRSettings] = useState<QRSettings>(qrSettings);
+  const [initSize, setInitSize] = useState<number>(220);
+  const [initExtension, setInitExtension] = useState<string>('png');
 
   useEffect(() => {
     setShowConfig(show);
   }, [show]);
 
   useEffect(() => {
-    setQrSize(size);
-  }, [size]);
-
-  useEffect(() => {
-    setQrExtension(exten.toLowerCase());
-  }, [exten]);
+    setMyQRSettings(qrSettings);
+    setInitSize(qrSettings.QRProps?.size ? qrSettings.QRProps.size : 220);
+    setInitExtension(qrSettings.QRType);
+  }, [qrSettings]);
 
   const onExtensionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQrExtension(event.target.id.split('-')[2]);
-    extensionCallback(event.target.id.split('-')[2]);
+    const qSet: QRSettings = {...myQRSettings};
+    qSet.QRType = event.target.id.split('-')[2];
+    setMyQRSettings(qSet);
   };
 
   const onSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQrSize(parseInt(event.target.value, 10));
+    const qSet: QRSettings = {...myQRSettings};
+    const qProp = {...qSet.QRProps};
+    qProp.size = parseInt(event.target.value, 10);
+    qSet.QRProps = qProp;
+    setMyQRSettings(qSet);
     sizeCallback(parseInt(event.target.value, 10));
   };
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     setShowConfig(false);
-    sizeCallback(qrSize);
-    extensionCallback(qrExtension);
+    window.electronAPI
+      .saveQRSettings(JSON.stringify(myQRSettings))
+      .then(() => {
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+    onHide(true);
   };
 
   const handleCancel = () => {
-    sizeCallback(initSize);
+    sizeCallback(initSize | 220);
     extensionCallback(initExtension);
     setShowConfig(false);
     onHide(false);
@@ -117,7 +124,7 @@ export default function QRConfigForm({
                   }
                 >
                   <Form.Label size="lg" style={{ fontSize: 'large' }}>
-                    Size: {qrSize}
+                    Size: {myQRSettings.QRProps?.size}
                   </Form.Label>
                 </OverlayTrigger>
               </Form.Group>
@@ -134,9 +141,9 @@ export default function QRConfigForm({
                 }
               >
                 <Form.Range
-                  value={qrSize}
+                  value={myQRSettings.QRProps?.size ? myQRSettings.QRProps.size : 220}
                   min={150}
-                  max={350}
+                  max={1000}
                   step={10}
                   onChange={(e) => {
                     onSizeChange(e);
@@ -167,7 +174,7 @@ export default function QRConfigForm({
                     onChange={(e) => {
                       onExtensionChange(e);
                     }}
-                    checked={qrExtension === 'png'}
+                    checked={myQRSettings.QRType === 'png'}
                   />
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -182,7 +189,7 @@ export default function QRConfigForm({
                     id="inline-radio-jpg"
                     style={{ marginRight: '.5rem' }}
                     onChange={onExtensionChange}
-                    checked={qrExtension === 'jpg'}
+                    checked={myQRSettings.QRType === 'jpg'}
                   />
                 </OverlayTrigger>
               </div>
@@ -209,8 +216,12 @@ export default function QRConfigForm({
 
 QRConfigForm.propTypes = {
   show: PropTypes.bool.isRequired,
-  size: PropTypes.number.isRequired,
-  exten: PropTypes.string.isRequired,
+  qrSettings: PropTypes.shape({
+    QRType: PropTypes.string,
+    QRProps: PropTypes.shape({
+      size: PropTypes.number,
+    }).isRequired,
+  }).isRequired,
   sizeCallback: PropTypes.func.isRequired,
   extensionCallback: PropTypes.func.isRequired,
   onHide: PropTypes.func.isRequired,

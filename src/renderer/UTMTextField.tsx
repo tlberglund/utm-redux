@@ -36,11 +36,13 @@ function UTMTextField({
   targetType,
   enableMe,
   qrOnly,
+  value,
 }: {
   valueChanged: (value: string) => void;
   targetType: string;
   enableMe: boolean;
   qrOnly: boolean;
+  value: string;
 }): JSX.Element {
   const [ariaLabel, setAriaLabel] = useState<string>('');
   const [label, setLabel] = useState<string>('');
@@ -50,6 +52,7 @@ function UTMTextField({
   const [enableChoice, setEnableChoice] = useState<boolean>(true);
   const [tType, setTType] = useState<string>(targetType);
   const [qrOnlyState, setQrOnlyState] = useState<boolean>(qrOnly);
+  const [myValue, setMyValue] = useState<string>(value || '');
   const ref = useRef(null);
 
   // get the configuration
@@ -70,6 +73,15 @@ function UTMTextField({
       });
     setTType(targetType);
   }, [targetType]);
+
+  useEffect(() => {
+    console.log(`Value: ${value}`);
+    if (value && value !== 'https://www.example.com/') {
+      console.log(`value: ${value}`);
+      setMyValue(value);
+      setEnableChoice(true);
+    }
+  }, [value]);
 
   useEffect(() => {
     setEnableChoice(enableMe);
@@ -100,6 +112,7 @@ function UTMTextField({
             id={`${targetType}-target`}
             aria-label={ariaLabel}
             aria-describedby={tooltip}
+            value={myValue}
             onChange={(eventKey) => {
               if (!qrOnlyState) {
                 valueChanged(

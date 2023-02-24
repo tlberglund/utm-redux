@@ -27,6 +27,10 @@ const configuration: webpack.Configuration = {
 
   entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
 
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+
   output: {
     path: webpackPaths.distRendererPath,
     publicPath: './',
@@ -66,7 +70,7 @@ const configuration: webpack.Configuration = {
       },
       // Images
       {
-        test: /\.(png|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
         type: 'asset/resource',
       },
       // SVG

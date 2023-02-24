@@ -78,11 +78,11 @@
       "src"
     ],
     "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".json"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
@@ -120,11 +120,11 @@
     "react-bootstrap-range-slider": "^3.0.8",
     "react-dom": "^18.2.0",
     "react-qrcode-logo": "^2.8.0",
-    "react-router-dom": "^6.7.0"
+    "react-router-dom": "^6.7.0",
+    "react-uuid": "^2.0.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.2.10",
-    "electron-notarize": "^1.2.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.3.1",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
@@ -150,6 +150,7 @@
     "electron": "^20.0.2",
     "electron-builder": "^23.0.2",
     "electron-devtools-installer": "^3.2.0",
+    "electron-notarize": "^1.2.2",
     "electronmon": "^2.0.2",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-base": "^15.0.0",

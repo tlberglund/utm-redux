@@ -21,16 +21,26 @@
  * SOFTWARE.
  */
 import { contextBridge, ipcRenderer } from 'electron';
-import { UtmParams } from '../renderer/types';
+import { QRSettings, UtmParams } from '../renderer/types';
 
 export type Channels = 'utm-builder';
 export type Events =
+  | 'get-qr-settings'
+  | 'save-qr-settings'
+  | 'save-link'
+  | 'clear-history'
+  | 'get-links'
   | 'get-config'
   | 'get-params'
   | 'save-config'
   | 'check-passwd';
 
 export type electronAPI = {
+  getQRSettings: () => Promise<string>;
+  saveQRSettings: (params: string) => Promise<string>;
+  saveLink: (linkData: string) => Promise<string>;
+  clearHistory: () => Promise<string>;
+  getLinks: () => Promise<string>;
   getConfig: () => Promise<string>;
   getParams: (key: string) => Promise<string>;
   saveConfig: (key: string) => Promise<string>;
@@ -39,6 +49,21 @@ export type electronAPI = {
 };
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  getQRSettings: () => {
+    return ipcRenderer.invoke('get-qr-settings');
+  },
+  saveQRSettings: (params: string) => {
+    return ipcRenderer.invoke('save-qr-settings', params);
+  },
+  saveLink: (linkData: string) => {
+    return ipcRenderer.invoke('save-link', linkData);
+  },
+  clearHistory: () => {
+    return ipcRenderer.invoke('clear-history');
+  },
+  getLinks: () => {
+    return ipcRenderer.invoke('get-links');
+  },
   getConfig: () => {
     return ipcRenderer.invoke('get-config');
   },
@@ -53,7 +78,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   clearForm: () => {
     return ipcRenderer.invoke('clear-form');
-  }
+  },
 });
 
 // Path: src/main/preload.ts
@@ -61,6 +86,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
 declare global {
   interface Window {
     electronAPI: {
+      getQRSettings: () => Promise<string>;
+      saveQRSettings: (params: string) => Promise<string>;
+      saveLink: (linkData: string) => Promise<string>;
+      clearHistory: () => Promise<string>;
+      getLinks: () => Promise<string>;
       getConfig: () => Promise<string>;
       getParams: (key: string) => Promise<string>;
       saveConfig: (key: string) => Promise<string>;

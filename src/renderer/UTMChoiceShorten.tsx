@@ -88,8 +88,8 @@ export default function UTMChoice({
     setErrorLabel(settings.error);
     setShowName(settings.showName);
     setTooltip(settings.tooltip);
-    setValues(settings.value);
-    setChoices(getGroups(settings.value));
+    // setValues(settings.value);
+    // setChoices(getGroups(settings.value));
   }, [settings]);
 
   useEffect(() => {
