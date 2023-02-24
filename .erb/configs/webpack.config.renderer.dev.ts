@@ -50,6 +50,9 @@ const configuration: webpack.Configuration = {
     'webpack/hot/only-dev-server',
     path.join(webpackPaths.srcRendererPath, 'index.tsx'),
   ],
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
 
   output: {
     path: webpackPaths.distRendererPath,

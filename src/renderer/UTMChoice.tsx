@@ -32,15 +32,17 @@ export default function UTMChoice({
   enabled,
   id,
   settings,
+  selected,
 }: {
   valueChanged: (value: string) => void;
   targetType: string;
   enabled: boolean;
   id: string;
   settings: UtmObj;
+  selected: string;
 }): JSX.Element {
   const [label, setLabel] = useState<string>('');
-  const [values, setValues] = useState<UtmKeyValue[]>([{key: '', value: ''}]);
+  const [values, setValues] = useState<UtmKeyValue[]>([{ key: '', value: '' }]);
   const [tooltip, setTooltip] = useState<string>('');
   const [ariaLabel, setAriaLabel] = useState<string>('');
   const [errorLabel, setErrorLabel] = useState<string>('');
@@ -51,15 +53,17 @@ export default function UTMChoice({
   const [displayValue, setDisplayValue] = useState<string>('');
   const ref = useRef(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps, no-undef
   function getGroups(vals: UtmKeyValue[]): JSX.Element[] {
+    // eslint-disable-next-line no-undef
     const groups: JSX.Element[] = [];
-     const def = enableChoice ? 'Choose one ...' : 'Choose a Term first';
+    const def = enableChoice ? 'Choose one ...' : 'Choose a Term first';
     groups.push(
       <option key={`${targetType}-default`} value="">
         {def}
       </option>
     );
+    // eslint-disable-next-line array-callback-return
     vals.map((val: UtmKeyValue) => {
       groups.push(
         <option key={`${targetType}-${val.key}`} id={val.key} value={val.value}>
@@ -79,7 +83,17 @@ export default function UTMChoice({
       valueChanged('');
       return;
     }
+    console.log(`selectedValue: ${e.target?.value}`);
     setDisplayValue(e.target?.value);
+  };
+
+  const setDisplayString = (value: string): string => {
+    console.log(`setDisplayValue: ${value}`);
+    const disp = settings.value.find((val) => val.key === value);
+    if (disp) {
+      return disp.value;
+    }
+    return '';
   };
 
   // get the configuration
@@ -91,7 +105,17 @@ export default function UTMChoice({
     setTooltip(settings.tooltip);
     setValues(settings.value);
     setChoices(getGroups(settings.value));
-  }, [settings]);
+    setDisplayValue(setDisplayString(selected));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings, selected]);
+
+  // useEffect(() => {
+  //   console.log(`selected: ${selected}`);
+  //   if (selected !== '' && selected !== undefined) {
+  //     console.log(`Value changed: ${selected}`);
+  //     setDisplayValue(selected);
+  //   }
+  // }, [selected]);
 
   useEffect(() => {
     setEnableChoice(enabled);
@@ -107,11 +131,11 @@ export default function UTMChoice({
           id={targetType}
           disabled={!enableChoice}
           onChange={(eventKey) => {
-            if(eventKey.target.value === 'Choose one ...') {
+            if (eventKey.target.value === 'Choose one ...') {
               valueChanged('');
               return;
             }
-            if(eventKey.target.value === 'Choose a Term first') {
+            if (eventKey.target.value === 'Choose a Term first') {
               valueChanged('');
               return;
             }
@@ -142,4 +166,5 @@ UTMChoice.propTypes = {
     tooltip: PropTypes.string.isRequired,
     value: PropTypes.arrayOf(PropTypes.object).isRequired,
   }).isRequired,
+  selected: PropTypes.string.isRequired,
 };

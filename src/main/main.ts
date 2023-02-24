@@ -35,9 +35,10 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import Store from 'electron-store';
-import { UtmParams, defaultUTMParams } from '../renderer/types';
+import { UtmParams, defaultUTMParams, QRSettings, defaultQRSettings } from '../renderer/types';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { LinkData } from '../renderer/types';
 
 const electronApp = require('electron').app;
 
@@ -56,6 +57,25 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 
 /*
+ * get the params from the store
+ * @return QR Configuration settings
+ */
+ipcMain.handle('get-qr-settings', () => {
+  return JSON.stringify(store.get('qr-settings', defaultQRSettings));
+});
+
+/*
+ * save the QR Code config to the store
+ * @param event - Just send null, but it's required?
+ * @param config - the config to save
+ */
+ipcMain.handle('save-qr-settings', (event: Event, config: string) => {
+  store.delete('qr-settings');
+  store.set('qr-settings', JSON.parse(config));
+  return JSON.stringify(store.get('qr-settings', defaultQRSettings));
+});
+
+/*
  * save the config to the store
  * @param event - Just send null, but it's required?
  * @param config - the config to save
@@ -67,6 +87,34 @@ ipcMain.handle('save-config', (event: Event, config: string) => {
 });
 
 /*
+ * save a link to the store
+ * @param event - Just send null, but it's required?
+ * @param linkData - the link to save
+ * @returns the list of links
+ */
+ipcMain.handle('save-link', (event: Event, linkData: string) => {
+  const links: LinkData[] = store.get('utm-links', []) as LinkData[];
+  store.delete('utm-links');
+  links.push(JSON.parse(linkData));
+  store.set('utm-links', links);
+  return JSON.stringify(links);
+});
+
+/*
+ * get all the links in history
+ * @param event - Just send null, but it's required?
+ * @returns the list of links
+ */
+ipcMain.handle('get-links', () => {
+  return JSON.stringify(store.get('utm-links', [{}]));
+});
+
+ipcMain.handle('clear-history', () => {
+  store.delete('utm-links');
+  return JSON.stringify(store.get('utm-links', [{}]));
+});
+
+/*
  * get the config from the store
  * @param event - Just send null, but it's required?
  */
@@ -75,7 +123,7 @@ ipcMain.handle('get-config', () => {
 });
 
 /*
- * get the config from the store
+ * get the password from the store
  * @param event - Just send null, but it's required?
  */
 ipcMain.handle('check-passwd', () => {
@@ -88,7 +136,7 @@ ipcMain.handle('check-passwd', () => {
 });
 
 /*
- * get the config from the store
+ * get the params from the store
  * @param event - Just send null, but it's required?
  * @param pName - the name of the Configuration parameter to return
  */
@@ -157,9 +205,9 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.11',
+    applicationVersion: 'v1.6.12',
     copyright: '© 2023',
-    version: 'b1031',
+    version: 'b1032',
     credits:
       'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],
@@ -169,8 +217,8 @@ const createWindow = async () => {
   app.setAboutPanelOptions(options);
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 800,
+    width: 1124,
+    height: 875,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged

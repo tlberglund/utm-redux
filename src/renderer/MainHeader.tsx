@@ -30,11 +30,12 @@ export default function MainHeader() {
           <h4
             className="post-title header-stuff"
             style={{ textAlign: 'center' }}
-          >UTM Link Builder and QR Code Generator
+          >
+            UTM Link Builder and QR Code Generator
           </h4>
           <p className="header-stuff" style={{ textAlign: 'center' }}>
             Posting a link back to a web resource?
-          <br />
+            <br />
             Create a trackable link and make it count!
           </p>
         </article>

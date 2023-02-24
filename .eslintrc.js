@@ -10,6 +10,17 @@ module.exports = {
       1,
       { extensions: ['.js', '.jsx', '.tsx'] },
     ],
+    'import/extensions': [
+      'error',
+      'always',
+      'ignorePackages',
+      {
+        'js': 'never',
+        'jsx': 'never',
+        'ts': 'never',
+        'tsx': 'never',
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2020,
@@ -27,7 +38,11 @@ module.exports = {
       },
       typescript: {},
     },
-    'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      { '.js': 'never', '.jsx': 'never', '.ts': 'never', '.tsx': 'never' },
+    ],
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],
     },

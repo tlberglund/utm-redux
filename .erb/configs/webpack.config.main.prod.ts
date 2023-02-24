@@ -26,6 +26,9 @@ const configuration: webpack.Configuration = {
     main: path.join(webpackPaths.srcMainPath, 'main.ts'),
     preload: path.join(webpackPaths.srcMainPath, 'preload.ts'),
   },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
 
   output: {
     path: webpackPaths.distMainPath,

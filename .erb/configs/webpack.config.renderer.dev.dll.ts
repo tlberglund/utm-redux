@@ -25,6 +25,9 @@ const configuration: webpack.Configuration = {
 
   externals: ['fsevents', 'crypto-browserify'],
 
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   /**
    * Use `module` from `webpack.config.renderer.dev.js`
    */

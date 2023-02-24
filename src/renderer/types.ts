@@ -21,6 +21,9 @@
  * SOFTWARE.
  */
 
+import { IProps } from 'react-qrcode-logo';
+import logo from '../../assets/images/logo-mark_fill.png';
+
 export type UtmKeyValue = {
   key: string;
   value: string;
@@ -218,30 +221,50 @@ export const defaultUTMParams: UtmParams = {
   region_name: defaultUTMRegionName,
 };
 
-// export const defaultQRStyle = new QRCodeStyling({
-//   width: 180,
-//   height: 180,
-//   margin: 0,
-//   image: icon,
-//   type: 'canvas',
-//   dotsOptions: {
-//     color: '#0B263E',
-//     type: 'dots',
-//   },
-//   imageOptions: {
-//     crossOrigin: 'anonymous',
-//     imageSize: 0.15,
-//     margin: -25,
-//   },
-//   cornersSquareOptions: {
-//     type: 'dot',
-//     color: '#0B263E',
-//   },
-//   cornersDotOptions: {
-//     type: 'dot',
-//     color: '#0B263E',
-//   },
-//   backgroundOptions: {
-//     color: '#ffffff',
-//   },
-// });
+export type LinkData = {
+  longLink: string;
+  shortLink: string;
+  uuid: string;
+  teamName: string;
+  regionName: string;
+  campaign: string;
+  source: string;
+  medium: string;
+  term: string;
+  target: string;
+  base: string;
+  countryName: string;
+  date: string;
+};
+
+export type QRSettings = {
+  QRProps: IProps;
+  QRType: string;
+};
+
+export const DefaultQRStyle: IProps = {
+  value: 'https://www.example.com/',
+  ecLevel: 'H',
+  size: 220,
+  quietZone: 0,
+  enableCORS: true,
+  bgColor: '#FFFFFF',
+  fgColor: 'rgba(11, 38, 62, 1)',
+  logoImage: '',
+  logoWidth: 60,
+  logoHeight: 60,
+  logoOpacity: 10,
+  removeQrCodeBehindLogo: false,
+  qrStyle: 'dots',
+  eyeColor: 'rgba(11, 38, 62, 1)',
+  eyeRadius: [
+    [16, 16, 0, 16],
+    [16, 16, 16, 0],
+    [16, 0, 16, 16],
+  ],
+};
+
+export const defaultQRSettings: QRSettings = {
+  QRProps: DefaultQRStyle,
+  QRType: 'png',
+};

@@ -33,18 +33,22 @@ import {
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
-import CountrySelect, { ICountry } from 'react-bootstrap-country-select';
+import CountrySelect,  { ICountry } from 'react-bootstrap-country-select';
+import uuid from 'react-uuid';
 import UTMTextField from './UTMTextField';
 import UTMChoice from './UTMChoice';
+import HistoryChooser from './HistoryChooser';
 import {
   BitlyConfig,
   defaultBitlyConfig,
   defaultUTMParams,
   UtmParams,
+  LinkData,
 } from './types';
 import BitlyCheck from './BitlyCheck';
 import QCode from './QRCode';
 import 'react-bootstrap-country-select/dist/react-bootstrap-country-select.css';
+import DireWarning from './configuration/DireWarning';
 
 export default function LinkForm(): JSX.Element {
   const [campaign, setCampaign] = useState('');
@@ -67,7 +71,72 @@ export default function LinkForm(): JSX.Element {
   const [enableBitly, setEnableBitly] = useState(false);
   const [mainConfig, setMainConfig] = useState(defaultUTMParams);
   const [qrOnly, setQrOnly] = useState(false);
+  const [linkHistory, setLinkHistory] = useState<LinkData[]>([]);
+  const [showDireWarning, setShowDireWarning] = useState(false);
 
+
+
+  const getHistory = (): void => {
+    window.electronAPI
+      .getLinks()
+      .then((response: string) => {
+        console.log(`Response: ${response}`);
+        const linkData: LinkData[] = JSON.parse(response);
+        setLinkHistory(linkData);
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+  };
+
+  const saveLink = (): void => {
+    const ld: LinkData = {
+      longLink,
+      shortLink,
+      uuid: uuid(),
+      teamName: team,
+      regionName: region,
+      campaign,
+      source,
+      medium,
+      term: '',
+      target,
+      base,
+      countryName: countryID,
+      date: new Date().toLocaleString(),
+    };
+    const linkDataString = JSON.stringify(ld);
+    window.electronAPI
+      .saveLink(linkDataString)
+      .then((response: string) => {
+        console.log(`Response: ${response}`);
+        const linkData: LinkData[] = JSON.parse(response);
+        setLinkHistory(linkData);
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+  };
+
+  const clearHistory = (): void => {
+    window.electronAPI
+      .clearHistory()
+      .then((response) => {
+        console.log(`Response: ${response}`);
+        setLinkHistory(JSON.parse(response));
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+  };
+
+  const dire = (): void => {
+    setShowDireWarning(false);
+    clearHistory();
+  };
   const clearForm = (): void => {
     window.electronAPI
       .clearForm()
@@ -113,9 +182,10 @@ export default function LinkForm(): JSX.Element {
         );
       }
       if (target !== 'https://www.example.com/' && target !== '') {
-        setTarget((prevTarget) =>
-          prevTarget.endsWith('/') ? prevTarget : `${prevTarget}/`
-        );
+        setTarget(target);
+        // (prevTarget) =>
+        //  prevTarget.endsWith('/') ? prevTarget : `${prevTarget}/`
+        // );
       }
       ll = `${base}${target}`;
       setSource((prevSource) =>
@@ -147,7 +217,36 @@ export default function LinkForm(): JSX.Element {
     qrOnly,
   ]);
 
-  useEffect (() => {
+  useEffect(() => {
+    getHistory();
+  }, []);
+
+  const fillHistory = (histID: string) => {
+    if (histID === 'clear-history') {
+      setShowDireWarning(true);
+      return;
+    }
+    linkHistory.forEach((item) => {
+      if (item.uuid === histID) {
+        setBase(item?.base);
+        setTarget(item?.target);
+        setSource(item?.source);
+        setMedium(item?.medium);
+        setCampaign(item?.campaign);
+        setTeam(item?.teamName);
+        setRegion(item?.regionName);
+        setCountry(item?.countryName);
+        setUseBitly(false);
+        if (item?.shortLink !== '') {
+          setShortLink(item?.shortLink);
+          setUseBitly(true);
+        }
+        setLongLink(item?.longLink);
+      }
+    });
+  };
+
+  useEffect(() => {
     console.log('Restrict Bases', restrictBases);
   }, [restrictBases]);
 
@@ -279,24 +378,25 @@ export default function LinkForm(): JSX.Element {
           qrOnly={qrOnly}
         />
       </div>
-      <Row style={{marginBottom: '.25rem'}}>
-          <OverlayTrigger
-            placement="auto"
-            overlay={
-              <Tooltip id="bitly-tooltip">
-                Use StarTree Bitly Link-shortener
-              </Tooltip>
-            }
-          >
-            <Col sm={2} style={{ width: '20%' }}>
-              <BitlyCheck
-                targetType="bitly_config"
-                useMe={useBitly}
-                bitlyEnabled={enableBitly}
-                valueChanged={setUseBitly}
-              />
-            </Col>
-          </OverlayTrigger>
+      <Row style={{ marginBottom: '.25rem' }}>
+        <OverlayTrigger
+          placement="auto"
+          overlay={
+            <Tooltip id="bitly-tooltip">
+              Use StarTree Bitly Link-shortener
+            </Tooltip>
+          }
+        >
+          {/* bitly enable */}
+          <Col sm={2} style={{ width: '18%' }}>
+            <BitlyCheck
+              targetType="bitly_config"
+              useMe={useBitly}
+              bitlyEnabled={enableBitly}
+              valueChanged={setUseBitly}
+            />
+          </Col>
+        </OverlayTrigger>
         <OverlayTrigger
           placement="auto"
           overlay={
@@ -305,7 +405,7 @@ export default function LinkForm(): JSX.Element {
             </Tooltip>
           }
         >
-          <Col sm={3}>
+          <Col sm={3} style={{ width: '22%' }}>
             <Form.Check
               type="switch"
               id="qr-only-show"
@@ -318,24 +418,58 @@ export default function LinkForm(): JSX.Element {
             />
           </Col>
         </OverlayTrigger>
-        <Col sm={6} style={{ textAlign: 'right', float: 'right' }}>
-          <OverlayTrigger
-            placement="auto"
-            overlay={
-              <Tooltip id="clear-btn-tooltip">
-                Clear the form and start over.
-              </Tooltip>
-            }
-          >
-            <Button
-              size="sm"
-              variant="outline-primary"
-              onClick={clearForm}
-              style={{ float: 'right', marginRight: '-30px' }}
-            >
-              Clear Form
-            </Button>
-          </OverlayTrigger>
+        <Col sm={6}>
+          <Row style={{ width: '120%' }}>
+            <Col sm={6} />
+            <Col sm={2}>
+              <OverlayTrigger
+                placement="auto"
+                overlay={
+                  <Tooltip id="clear-btn-tooltip">All of your saved links.</Tooltip>
+                }
+              >
+                <HistoryChooser history={linkHistory} callback={fillHistory} />
+              </OverlayTrigger>
+            </Col>
+            <Col sm={2}>
+              <OverlayTrigger
+                placement="auto"
+                overlay={
+                  <Tooltip id="clear-btn-tooltip">
+                    Your saved links.
+                  </Tooltip>
+                }
+              >
+                <Button
+                  size="sm"
+                  variant="outline-primary"
+                  onClick={saveLink}
+                  style={{ float: 'right', marginRight: '-30px' }}
+                >
+                  Save
+                </Button>
+              </OverlayTrigger>
+            </Col>
+            <Col sm={2}>
+              <OverlayTrigger
+                placement="auto"
+                overlay={
+                  <Tooltip id="clear-btn-tooltip">
+                    Clear the form and start over.
+                  </Tooltip>
+                }
+              >
+                <Button
+                  size="sm"
+                  variant="outline-primary"
+                  onClick={clearForm}
+                  style={{ float: 'right', marginRight: '-30px' }}
+                >
+                  Clear
+                </Button>
+              </OverlayTrigger>
+            </Col>
+          </Row>
         </Col>
       </Row>
       {/* utm_target */}
@@ -349,6 +483,7 @@ export default function LinkForm(): JSX.Element {
                 id="restricted-bases"
                 enabled
                 settings={mainConfig.utm_bases}
+                selected={base}
               />
             )}
           </Col>
@@ -362,6 +497,7 @@ export default function LinkForm(): JSX.Element {
                 (base !== '' && base !== 'choose_one_...')
               }
               qrOnly={qrOnly}
+              value={target === 'https://www.example.com/' ? '' : target}
             />
           </Col>
         </InputGroup>
@@ -376,6 +512,7 @@ export default function LinkForm(): JSX.Element {
               enabled={!qrOnly}
               id="utm-source"
               settings={mainConfig.utm_term}
+              selected={source}
             />
           </InputGroup>
         </Col>
@@ -390,18 +527,20 @@ export default function LinkForm(): JSX.Element {
               enabled={!qrOnly}
               id="medium-choice"
               settings={mainConfig.utm_medium}
+              selected={medium}
             />
           </InputGroup>
         </Col>
       </Row>
       {/* utm_source */}
-      <Row >
+      <Row>
         <Col sm={12}>
           <UTMTextField
             valueChanged={setCampaign}
             targetType="utm_campaign"
             enableMe={!qrOnly}
             qrOnly={qrOnly}
+            value={campaign}
           />
         </Col>
       </Row>
@@ -414,10 +553,11 @@ export default function LinkForm(): JSX.Element {
               enabled={!qrOnly}
               id="utm-team"
               settings={mainConfig.team_name}
+              selected={team}
             />
           </InputGroup>
         </Col>
-        <Col sm={showCountry ? 4 : 6} >
+        <Col sm={showCountry ? 4 : 6}>
           <InputGroup className="mb-3" size="lg">
             <UTMChoice
               valueChanged={updateRegion}
@@ -425,6 +565,7 @@ export default function LinkForm(): JSX.Element {
               enabled={!qrOnly}
               id="utm-region"
               settings={mainConfig.region_name}
+              selected={region}
             />
           </InputGroup>
         </Col>
@@ -467,6 +608,11 @@ export default function LinkForm(): JSX.Element {
       </Row>
       <p />
       {/*  */}
+      <DireWarning
+        show={showDireWarning}
+        onHide={setShowDireWarning}
+        onConfirm={dire}
+      />
     </div>
   );
 }

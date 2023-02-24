@@ -29,9 +29,10 @@ import React, {
 import { QRCode, IProps } from 'react-qrcode-logo';
 import { Button, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
 import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
+import uuid from 'react-uuid';
 import QRConfigForm from './configuration/QRConfigForm';
 import logo from '../../assets/images/logo-mark_fill.png';
-
+import { defaultQRSettings, DefaultQRStyle, QRSettings } from './types';
 export default function QCode({
   link,
   ext,
@@ -44,37 +45,29 @@ export default function QCode({
   const [fileExt, setFileExt] = useState<string>('png');
   const [dataLink, setDataLink] = useState<string>('https://example.com/');
   const [copied, setCopied] = useState<boolean>(false);
-  const [qrProps, setQRProps] = useState<IProps>({
-    value: 'https://google.com/',
-    ecLevel: 'H',
-    size: 175,
-    quietZone: 0,
-    enableCORS: true,
-    bgColor: '#FFFFFF',
-    fgColor: 'rgba(11, 38, 62, 1)',
-    logoImage: logo,
-    logoWidth: 60,
-    logoHeight: 60,
-    logoOpacity: 10,
-    removeQrCodeBehindLogo: false,
-    qrStyle: 'dots',
-    eyeColor: 'rgba(11, 38, 62, 1)',
-    eyeRadius: [
-      [16, 16, 0, 16],
-      [16, 16, 16, 0],
-      [16, 0, 16, 16],
-    ],
-  });
-
-  const [qrSize, setQRSize] = useState<number>(175);
+  const [qrSettings, setQRSettings] = useState<QRSettings>(defaultQRSettings);
+  const [qrSize, setQRSize] = useState<number>(220);
   const [qrState, setQrState] = useState<boolean>(false);
   const [showConfig, setShowConfig] = useState<boolean>(false);
   const ref = useRef(null);
 
-  const updateQrSize = (size: number) => {
-    setQRSize(size);
-    setQRProps({ ...qrProps, size });
-  };
+  useEffect(() => {
+    window.electronAPI
+      .getQRSettings()
+      .then((result) => {
+        const qrS: QRSettings = JSON.parse(result);
+        console.log(`QRSettings: ${JSON.stringify(qrS)} `);
+        const qr = {...qrS.QRProps};
+        qr.logoImage = logo;
+        setQRSettings(qrS);
+        setFileExt(qrS.QRType);
+        setQRSize(qrS.QRProps?.size ? qrS.QRProps.size : 220);
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+   }, []);
 
   const onDownloadClick = () => {
     const canvas = document.getElementById(
@@ -83,7 +76,7 @@ export default function QCode({
     const dataURL = canvas?.toDataURL(`image/${fileExt}`);
     const a = document.createElement('a');
     a.href = dataURL;
-    a.download = `qrcode.${fileExt}`;
+    a.download = `qrcode-${uuid()}.${fileExt}`;
     a.click();
   };
 
@@ -102,7 +95,12 @@ export default function QCode({
   }
 
   const updateQRProps = (link: string) => {
-    setQRProps({ ...qrProps, value: link });
+    const qSet: QRSettings = {...qrSettings};
+    const qrProps: IProps = {...qSet.QRProps};
+    qrProps.value = link;
+    qrProps.logoImage = logo;
+    qSet.QRProps = qrProps;
+    setQRSettings(qSet);
   };
 
   useEffect(() => {
@@ -210,27 +208,27 @@ export default function QCode({
               >
                 <QRCode
                   id="react-qrcode-logo"
-                  value={qrProps.value}
-                  size={qrProps.size}
-                  bgColor={qrProps.bgColor}
-                  fgColor={qrProps.fgColor}
-                  logoImage={qrProps.logoImage}
-                  qrStyle={qrProps.qrStyle}
-                  logoWidth={qrProps.logoWidth}
-                  logoHeight={qrProps.logoHeight}
-                  logoOpacity={qrProps.logoOpacity}
-                  eyeColor={qrProps.eyeColor}
-                  eyeRadius={qrProps.eyeRadius}
-                  quietZone={qrProps.quietZone}
-                  enableCORS={qrProps.enableCORS}
-                  ecLevel={qrProps.ecLevel}
+                  value={qrSettings.QRProps.value}
+                  size={qrSize}
+                  bgColor={qrSettings.QRProps.bgColor}
+                  fgColor={qrSettings.QRProps.fgColor}
+                  logoImage={qrSettings.QRProps.logoImage}
+                  qrStyle={qrSettings.QRProps.qrStyle}
+                  logoWidth={qrSettings.QRProps.logoWidth}
+                  logoHeight={qrSettings.QRProps.logoHeight}
+                  logoOpacity={qrSettings.QRProps.logoOpacity}
+                  eyeColor={qrSettings.QRProps.eyeColor}
+                  eyeRadius={qrSettings.QRProps.eyeRadius}
+                  quietZone={qrSettings.QRProps.quietZone}
+                  enableCORS={qrSettings.QRProps.enableCORS}
+                  ecLevel={qrSettings.QRProps.ecLevel}
                 />
               </div>
             </OverlayTrigger>
           </Row>
-          <Row style={{ marginRight: '-30px', textAlignLast: 'right' }}>
-            <Col sm="6" style={{ marginRight: '-30px' }} />
-            <Col sm="6" style={{ marginRight: '-30px' }}>
+          <Row style={{ textAlign: 'center', margin: 'auto' }}>
+            {/* <Col sm="6" style={{ marginRight: '-30px' }} /> */}
+            <Col sm="6">
               <OverlayTrigger
                 placement="auto"
                 overlay={<Tooltip>Download your QR Code</Tooltip>}
@@ -244,7 +242,7 @@ export default function QCode({
                 </Button>
               </OverlayTrigger>
             </Col>
-            {/* <Col sm="6">
+            <Col sm="6">
               <OverlayTrigger
                 placement="auto"
                 overlay={<Tooltip>Adjust your QR Code</Tooltip>}
@@ -257,17 +255,15 @@ export default function QCode({
                   Options
                 </Button>
               </OverlayTrigger>
-            </Col> */}
+            </Col>
           </Row>
         </div>
         <QRConfigForm
           show={showConfig}
-          size={qrSize}
-          exten={ext}
-          sizeCallback={updateQrSize}
+          qrSettings={qrSettings}
+          sizeCallback={setQRSize}
           extensionCallback={setFileExt}
-          onHide={showConfigWindow}
-        />
+          onHide={showConfigWindow} />
       </div>
     </div>
   );
