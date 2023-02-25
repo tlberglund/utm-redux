@@ -101,7 +101,7 @@ export default function QRConfigForm({
     <Modal
       show={showConfig}
       onHide={handleCancel}
-      size="xl"
+      size="lg"
       dialogClassName="modal-40w"
       backdrop="static"
     >
@@ -141,7 +141,9 @@ export default function QRConfigForm({
                 }
               >
                 <Form.Range
-                  value={myQRSettings.QRProps?.size ? myQRSettings.QRProps.size : 220}
+                  value={
+                    myQRSettings.QRProps?.size ? myQRSettings.QRProps.size : 220
+                  }
                   min={150}
                   max={1000}
                   step={10}
@@ -192,21 +194,38 @@ export default function QRConfigForm({
                     checked={myQRSettings.QRType === 'jpg'}
                   />
                 </OverlayTrigger>
+                <OverlayTrigger
+                  placement="auto"
+                  overlay={<Tooltip>Download as a JPG</Tooltip>}
+                >
+                  <Form.Check
+                    inline
+                    label=".svg"
+                    name="group1"
+                    type="radio"
+                    id="inline-radio-svg"
+                    style={{ marginRight: '.5rem' }}
+                    onChange={onExtensionChange}
+                    checked={myQRSettings.QRType === 'svg'}
+                  />
+                </OverlayTrigger>
               </div>
             </Col>
           </Row>
-          <Form.Group as={Row}>
-            <Col sm={4}>
+          <Form.Group as={Row} style={{margin: 'auto'}}>
+            <Col sm={8}>&nbsp;</Col>
+            <Col sm={1}>
               <Button variant="primary" type="submit">
-                Submit
+                Save
               </Button>
             </Col>
-            <Col sm={4}>&nbsp;</Col>
-            <Col sm={4}>
+            <Col sm={1}>&nbsp;</Col>
+            <Col sm={1}>
               <Button variant="secondary" onClick={handleCancel}>
                 Cancel
               </Button>
             </Col>
+            {/* <Col sm={3}>&nbsp;</Col> */}
           </Form.Group>
         </Form>
       </Modal.Body>

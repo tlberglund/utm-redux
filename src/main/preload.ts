@@ -39,6 +39,7 @@ export type electronAPI = {
   getQRSettings: () => Promise<string>;
   saveQRSettings: (params: string) => Promise<string>;
   saveLink: (linkData: string) => Promise<string>;
+  saveSVG: (svgData: string) => Promise<string>;
   clearHistory: () => Promise<string>;
   getLinks: () => Promise<string>;
   getConfig: () => Promise<string>;
@@ -73,6 +74,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveConfig: (key: string) => {
     return ipcRenderer.invoke('save-config', key);
   },
+  saveSVG: (svgData: string) => {
+    return ipcRenderer.invoke('save-svg', svgData);
+  },
   checkPass: () => {
     return ipcRenderer.invoke('check-passwd');
   },
@@ -89,6 +93,7 @@ declare global {
       getQRSettings: () => Promise<string>;
       saveQRSettings: (params: string) => Promise<string>;
       saveLink: (linkData: string) => Promise<string>;
+      saveSVG: (svgData: string) => Promise<string>;
       clearHistory: () => Promise<string>;
       getLinks: () => Promise<string>;
       getConfig: () => Promise<string>;

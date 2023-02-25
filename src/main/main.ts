@@ -39,6 +39,10 @@ import { UtmParams, defaultUTMParams, QRSettings, defaultQRSettings } from '../r
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { LinkData } from '../renderer/types';
+import { dialog } from 'electron';
+import uuid from 'react-uuid';
+
+
 
 const electronApp = require('electron').app;
 
@@ -100,6 +104,27 @@ ipcMain.handle('save-link', (event: Event, linkData: string) => {
   return JSON.stringify(links);
 });
 
+ipcMain.handle('save-svg', (event: Event, svg: string) => {
+  const options = {
+    title: 'Save QR Code',
+    defaultPath: path.join(home, `qr-code-${uuid()}.svg`),
+    createDirectory: true,
+    filters: [{ name: 'SVG', extensions: ['svg'] }],
+  };
+  dialog.showSaveDialog(options).then((result) => {
+    console.log(svg);
+    if (!result.canceled) {
+      const fs = require('fs');
+      fs.writeFile(result.filePath, svg, (err: any) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+      return result.filePath;
+    }
+    return 'cancelled';
+  });
+});
 /*
  * get all the links in history
  * @param event - Just send null, but it's required?
