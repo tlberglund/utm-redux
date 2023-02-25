@@ -33,6 +33,8 @@ import uuid from 'react-uuid';
 import QRConfigForm from './configuration/QRConfigForm';
 import logo from '../../assets/images/logo-mark_fill.png';
 import { defaultQRSettings, DefaultQRStyle, QRSettings } from './types';
+import potrace from 'potrace';
+
 export default function QCode({
   link,
   ext,
@@ -69,7 +71,34 @@ export default function QCode({
       });
    }, []);
 
+   const saveSVG = () => {
+      const canvas = document.getElementById(
+        'react-qrcode-logo'
+      ) as HTMLCanvasElement;
+      const params = {
+        background: qrSettings.QRProps?.bgColor,
+        color: '#0B263E',
+      };
+      const dataURL = canvas?.toDataURL(`image/${fileExt}`);
+      // const a = document.createElement('a');
+      // a.href = dataURL;
+      potrace.trace(dataURL, params, function (err: any, svg: any) {
+        if (err) throw err;
+        window.electronAPI
+          .saveSVG(svg)
+          .then((result) => {
+            return '';
+          })
+          .catch((error: unknown) => {
+            console.log(`Error: ${error}`);
+          });
+      });
+    };
   const onDownloadClick = () => {
+    if(qrSettings.QRType === 'svg') {
+      saveSVG();
+      return;
+    }
     const canvas = document.getElementById(
       'react-qrcode-logo'
     ) as HTMLCanvasElement;
