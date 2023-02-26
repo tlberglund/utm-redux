@@ -134,6 +134,9 @@ ipcMain.handle('get-links', () => {
   return JSON.stringify(store.get('utm-links', [{}]));
 });
 
+/* Clear all history links
+ * @returns an empty list of links
+ */
 ipcMain.handle('clear-history', () => {
   store.delete('utm-links');
   return JSON.stringify(store.get('utm-links', [{}]));
@@ -230,9 +233,9 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.12',
+    applicationVersion: 'v1.6.13',
     copyright: '© 2023',
-    version: 'b1032',
+    version: 'b1034',
     credits:
       'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],

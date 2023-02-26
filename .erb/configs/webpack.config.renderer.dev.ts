@@ -106,7 +106,7 @@ const configuration: webpack.Configuration = {
               prettier: false,
               svgo: false,
               svgoConfig: {
-                plugins: [{ removeViewBox: false }],
+                plugins: [{ removeViewBox: true }],
               },
               titleProp: true,
               ref: true,
