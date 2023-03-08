@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 /* eslint-disable no-case-declarations */
-import React, { useState, useEffect, ChangeEvent, SyntheticEvent } from 'react';
+import { useState, useEffect, ChangeEvent, SyntheticEvent } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Accordion, Modal } from 'react-bootstrap';
@@ -31,8 +31,10 @@ import PillArea from './pills/PillArea';
 
 export default function ConfigEditor({
   showMe,
+  callback,
 }: {
   showMe: boolean;
+  callback: (value: boolean) => void;
 }): JSX.Element {
   const [show, setShow] = useState(false);
   const [config, setConfig] = useState<UtmParams>(defaultUTMParams);
@@ -256,7 +258,7 @@ export default function ConfigEditor({
           setRegValid(false);
           return;
         }
-        setTeamVal('');
+        setRegionVal('');
         const newR = config.region_name.value;
         const newRPill = {
           key: target?.value?.replace(/,/g, '').split('=')[1],
@@ -364,12 +366,11 @@ export default function ConfigEditor({
   /* handle closing without saving */
   const handleCancel = () => {
     handleClose();
-    // eslint-disable-next-line react/destructuring-assignment
-    setShow(!show);
+    callback(false);
   };
 
   function callDone() {
-    setShow(!show);
+    callback(false);
   }
   /* handle the save button */
   const handleSave = (event: SyntheticEvent) => {
@@ -1313,4 +1314,5 @@ export default function ConfigEditor({
 
 ConfigEditor.propTypes = {
   showMe: PropTypes.bool.isRequired,
+  callback: PropTypes.func.isRequired,
 };

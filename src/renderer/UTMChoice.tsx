@@ -83,12 +83,10 @@ export default function UTMChoice({
       valueChanged('');
       return;
     }
-    console.log(`selectedValue: ${e.target?.value}`);
     setDisplayValue(e.target?.value);
   };
 
   const setDisplayString = (value: string): string => {
-    console.log(`setDisplayValue: ${value}`);
     const disp = settings.value.find((val) => val.key === value);
     if (disp) {
       return disp.value;
@@ -108,14 +106,6 @@ export default function UTMChoice({
     setDisplayValue(setDisplayString(selected));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings, selected]);
-
-  // useEffect(() => {
-  //   console.log(`selected: ${selected}`);
-  //   if (selected !== '' && selected !== undefined) {
-  //     console.log(`Value changed: ${selected}`);
-  //     setDisplayValue(selected);
-  //   }
-  // }, [selected]);
 
   useEffect(() => {
     setEnableChoice(enabled);

@@ -24,20 +24,31 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import uuid from 'react-uuid';
+import PropTypes from 'prop-types';
 import { LinkData } from './types';
 
 export default function HistoryChooser({
   history,
+  dark,
   callback,
 }: {
   history: LinkData[];
+  dark: boolean;
   callback: (value: string) => void;
 }): JSX.Element {
   const [historyList, setHistoryList] = useState<LinkData[]>([]);
+  const [darkMode, setDarkMode] = useState<boolean>(dark);
+  const [darkClass, setDarkClass] = useState<string>('header-stuff');
+
   const displayValue = 'History...';
   useEffect(() => {
     setHistoryList(history);
   }, [history]);
+
+  useEffect(() => {
+    setDarkMode(dark);
+    dark ? setDarkClass('header-stuff-dark') : setDarkClass('header-stuff');
+  }, [dark]);
 
   const items = historyList.map((item: LinkData) => {
     return (
@@ -47,6 +58,7 @@ export default function HistoryChooser({
         key={`${item.uuid}`}
         value={item.uuid}
         eventKey={item.uuid}
+        className={darkClass}
       >
         {item.shortLink ? item.shortLink : item.longLink}
       </Dropdown.Item>
@@ -64,8 +76,10 @@ export default function HistoryChooser({
         overlay={<Tooltip>All of your saved links</Tooltip>}
       >
         <DropdownButton
-          variant="outline-success"
+          variant={darkMode ? 'icon-only-dark' : 'icon-only'}
           size="sm"
+          color={darkMode ? '#adb5bd' : '#0B3665'}
+          className={darkClass}
           id="dropdown-basic-button"
           title={displayValue}
           onSelect={(eventKey) => {
@@ -87,3 +101,9 @@ export default function HistoryChooser({
     </>
   );
 }
+
+HistoryChooser.propTypes = {
+  history: PropTypes.arrayOf(PropTypes.object).isRequired,
+  dark: PropTypes.bool.isRequired,
+  callback: PropTypes.func.isRequired,
+};

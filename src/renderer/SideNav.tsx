@@ -22,21 +22,46 @@
  */
 import './hyde.css';
 import React, { useState, useEffect } from 'react';
-import { Form, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import {
+  Form,
+  Row,
+  Col,
+  OverlayTrigger,
+  Tooltip,
+  Button,
+} from 'react-bootstrap';
 import PasswordForm from './configuration/PasswordForm';
 import StarTree from '../../assets/images/ST_Logo_WhiteYellow.svg';
+import { Lightbulb, LightbulbFill } from 'react-bootstrap-icons';
+import PropTypes from 'prop-types';
 
 export default function SideNav({
   callback,
+  dark,
+  propogateDarkMode,
 }: {
   callback: (value: boolean) => void;
+  dark: boolean;
+  propogateDarkMode: (value: boolean) => void;
 }) {
   const [showPasswd, setShowPasswd] = useState(false);
+  const [darkMode, setDarkMode] = useState(dark);
 
   const passwdVisible = (show: boolean) => {
     setShowPasswd(show);
   };
 
+  useEffect(() => {
+    setDarkMode(dark);
+  }, [dark]);
+
+  const saveDarkMode = (darkB: boolean) => {
+    propogateDarkMode(darkB);
+  };
+
+  const toggleDark = () => {
+    saveDarkMode(!darkMode);
+  };
   return (
     // eslint-disable-next-line react/jsx-filename-extension
     <div>
@@ -44,9 +69,9 @@ export default function SideNav({
         <p />
         <p />
 
-          <a href="https://startree.ai/" target="_blank" rel="noreferrer">
-            <img src={StarTree} alt="StarTree Logo" width="75%" />
-          </a>
+        <a href="https://startree.ai/" target="_blank" rel="noreferrer">
+          <img src={StarTree} alt="StarTree Logo" width="75%" />
+        </a>
         <p />
         {/* <div className="sidebar-about">
           <p className="sidebar-lead">
@@ -99,6 +124,24 @@ export default function SideNav({
           <Form>
             <Row>
               <Col>
+                <Button
+                  type="button"
+                  size={'sm'}
+                  onClick={toggleDark}
+                  className="btn "
+                  style={{
+                    backgroundColor: '#0A1C2E',
+                    borderColor: '#0A1C2E',
+                  }}
+                >
+                  {darkMode ? (
+                    <LightbulbFill size={20} />
+                  ) : (
+                    <Lightbulb size={20} />
+                  )}
+                </Button>
+              </Col>
+              <Col>
                 <OverlayTrigger
                   placement="right"
                   overlay={
@@ -135,3 +178,9 @@ export default function SideNav({
     </div>
   );
 }
+
+SideNav.propTypes = {
+  callback: PropTypes.func.isRequired,
+  dark: PropTypes.bool.isRequired,
+  propogateDarkMode: PropTypes.func.isRequired,
+};

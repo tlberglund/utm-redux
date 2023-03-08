@@ -23,7 +23,8 @@
  */
 
 import './hyde.css';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import MainHeader from './MainHeader';
 import SideNav from './SideNav';
 import LinkForm from './LinkForm';
@@ -31,17 +32,71 @@ import ConfigEditor from './configuration/ConfigEditor';
 
 export default function MainPage() {
   const [editConfig, setEditConfig] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
+  const getDarkMode = () => {
+    window.electronAPI
+      .getDarkMode()
+      .then((response: string) => {
+        const d: boolean = JSON.parse(response);
+        setDarkMode(d);
+        d === true ? setDarkMode(true) : setDarkMode(false);
+        d ? window.document
+            .getElementsByTagName('html')[0]
+            .setAttribute('data-bs-theme', 'dark') : window.document
+            .getElementsByTagName('html')[0]
+            .setAttribute('data-bs-theme', 'light');
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+  };
+
+  const updateDarkMode = (dark: boolean) => {
+    window.electronAPI
+      .saveDarkMode(dark)
+      .then((response: string) => {
+        const d: boolean = JSON.parse(response);
+        return '';
+      })
+      .catch((error: unknown) => {
+        console.log(`Error: ${error}`);
+      });
+    dark ? window.document
+          .getElementsByTagName('html')[0]
+          .setAttribute('data-bs-theme', 'dark') : window.document
+          .getElementsByTagName('html')[0]
+          .setAttribute('data-bs-theme', 'light');
+    setDarkMode(dark);
+  };
+
+  useEffect(() => {
+    getDarkMode();
+  }, []);
+
+  const toggleConfig = (val: boolean) => {
+    setEditConfig(val);
+  };
   return (
     <div className="content">
       <div className="aside-column">
-        <SideNav callback={setEditConfig} />
+        <SideNav
+          callback={toggleConfig}
+          dark={darkMode}
+          propogateDarkMode={updateDarkMode}
+        />
       </div>
       <div className="main-column">
-        <MainHeader />
-        <LinkForm />
+        <MainHeader dark={darkMode} />
+        <LinkForm dark={darkMode} />
       </div>
-      <ConfigEditor showMe={editConfig} />
+      <ConfigEditor showMe={editConfig} callback={toggleConfig} />
     </div>
   );
 }
+
+MainPage.propTypes = {
+  dark: PropTypes.bool,
+  propogateDarkMode: PropTypes.func,
+};

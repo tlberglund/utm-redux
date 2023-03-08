@@ -33,16 +33,20 @@ import uuid from 'react-uuid';
 import QRConfigForm from './configuration/QRConfigForm';
 import logo from '../../assets/images/logo-mark_fill.png';
 import { defaultQRSettings, DefaultQRStyle, QRSettings } from './types';
+import { Gear, GearFill, Download } from 'react-bootstrap-icons';
+import PropTypes from 'prop-types';
 import potrace from 'potrace';
 
 export default function QCode({
   link,
   ext,
   qrOnly,
+  dark
 }: {
   link: string;
   ext: string;
   qrOnly: boolean;
+  dark: boolean;
 }) {
   const [fileExt, setFileExt] = useState<string>('png');
   const [dataLink, setDataLink] = useState<string>('https://example.com/');
@@ -51,14 +55,24 @@ export default function QCode({
   const [qrSize, setQRSize] = useState<number>(220);
   const [qrState, setQrState] = useState<boolean>(false);
   const [showConfig, setShowConfig] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(dark);
+  const [darkIconClass, setDarkIconClass] = useState<string>('copy-icon header-stuff');
+  const [iconButtonClass, setIconButtonClass] = useState<string>('button-icon header-stuff');
+  const [darkClass, setDarkClass] = useState<string>('header-stuff');
   const ref = useRef(null);
+
+  useEffect(() => {
+    setDarkMode(dark);
+    dark ? setDarkIconClass('copy-icon header-stuff-dark') : setDarkClass('copy-icon header-stuff');
+    dark ? setIconButtonClass('button-icon header-stuff-dark') : setIconButtonClass('button-icon header-stuff');
+    dark ? setDarkClass('header-stuff-dark') : setDarkClass('header-stuff');
+  }, [dark]);
 
   useEffect(() => {
     window.electronAPI
       .getQRSettings()
       .then((result) => {
         const qrS: QRSettings = JSON.parse(result);
-        console.log(`QRSettings: ${JSON.stringify(qrS)} `);
         const qr = {...qrS.QRProps};
         qr.logoImage = logo;
         setQRSettings(qrS);
@@ -157,10 +171,10 @@ export default function QCode({
               }
             >
               <Clipboard2CheckFill
-                className="copy-icon header-stuff"
+                className={darkIconClass}
                 style={{
                   fontSize: '2rem',
-                  color: '#0B263E',
+                  color: darkMode ? '#adb5bd' : '#0B263E',
                 }}
               />
             </OverlayTrigger>
@@ -177,7 +191,11 @@ export default function QCode({
               }
             >
               <ClipboardData
-                className="copy-icon header-stuff"
+                className={darkIconClass}
+                style={{
+                  fontSize: '2rem',
+                  color: darkMode ? '#adb5bd' : '#0B263E',
+                }}
                 tabIndex={0}
                 cursor="pointer"
                 role="button"
@@ -209,7 +227,7 @@ export default function QCode({
               role="button"
               tabIndex={0}
             >
-              <strong style={{ cursor: 'pointer' }} className="header-stuff">
+              <strong style={{ cursor: 'pointer' }} className={darkClass}>
                 {link}
               </strong>
             </div>
@@ -256,32 +274,41 @@ export default function QCode({
             </OverlayTrigger>
           </Row>
           <Row style={{ textAlign: 'center', margin: 'auto' }}>
-            {/* <Col sm="6" style={{ marginRight: '-30px' }} /> */}
-            <Col sm="6">
+            <Col sm="8"  />
+            <Col sm="2">
               <OverlayTrigger
                 placement="auto"
-                overlay={<Tooltip>Download your QR Code</Tooltip>}
+                overlay={<Tooltip id='download-qr-tooltip'>Download your QR Code</Tooltip>}
               >
                 <Button
-                  variant="outline-success"
+                  variant={darkMode ? 'icon-only-dark' : 'icon-only'}
                   size="sm"
                   onClick={onDownloadClick}
+                  className={darkClass}
                 >
-                  Download
+                  <Download
+                    className={darkClass}
+                    color={darkMode ? '#adb5bd' : '#0B263E'}
+                  />
                 </Button>
               </OverlayTrigger>
             </Col>
-            <Col sm="6">
+            <Col sm="2">
               <OverlayTrigger
                 placement="auto"
-                overlay={<Tooltip>Adjust your QR Code</Tooltip>}
+                overlay={<Tooltip id='adjust-qr-tooltip'>Adjust your QR Code</Tooltip>}
               >
                 <Button
-                  variant="outline-primary"
+                  variant={darkMode ? 'icon-only-dark' : 'icon-only'}
                   size="sm"
                   onClick={showConfigWindow}
+                  className={darkClass}
                 >
-                  Options
+                  {darkMode ? (
+                    <Gear className={darkClass} />
+                  ) : (
+                    <GearFill className={darkClass} />
+                  )}
                 </Button>
               </OverlayTrigger>
             </Col>
@@ -292,8 +319,16 @@ export default function QCode({
           qrSettings={qrSettings}
           sizeCallback={setQRSize}
           extensionCallback={setFileExt}
-          onHide={showConfigWindow} />
+          onHide={showConfigWindow}
+        />
       </div>
     </div>
   );
 }
+
+QCode.propTypes = {
+  link : PropTypes.string.isRequired,
+  ext : PropTypes.string.isRequired,
+  qrOnly : PropTypes.bool.isRequired,
+  dark: PropTypes.bool.isRequired
+};

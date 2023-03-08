@@ -75,9 +75,7 @@ function UTMTextField({
   }, [targetType]);
 
   useEffect(() => {
-    console.log(`Value: ${value}`);
     if (value && value !== 'https://www.example.com/') {
-      console.log(`value: ${value}`);
       setMyValue(value);
       setEnableChoice(true);
     }
