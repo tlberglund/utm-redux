@@ -33,7 +33,8 @@ export type Events =
   | 'get-config'
   | 'get-params'
   | 'save-config'
-  | 'check-passwd';
+  | 'check-passwd'
+  | 'set-passwd';
 
 export type electronAPI = {
   getQRSettings: () => Promise<string>;
@@ -46,7 +47,10 @@ export type electronAPI = {
   getParams: (key: string) => Promise<string>;
   saveConfig: (key: string) => Promise<string>;
   checkPass: () => Promise<string>;
+  setPass: (pass: string) => Promise<string>;
   clearForm: () => void;
+  saveDarkMode: (darkMode: boolean) => void;
+  getDarkMode: () => Promise<boolean>;
 };
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -80,9 +84,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   checkPass: () => {
     return ipcRenderer.invoke('check-passwd');
   },
+  setPass: (pass: string) => {
+    return ipcRenderer.invoke('set-passwd', pass);
+  },
   clearForm: () => {
     return ipcRenderer.invoke('clear-form');
   },
+  saveDarkMode: (darkMode: boolean) => {
+    return ipcRenderer.invoke('save-dark-mode', darkMode);
+  },
+  getDarkMode: () => {
+    return ipcRenderer.invoke('get-dark-mode');
+  }
 });
 
 // Path: src/main/preload.ts
@@ -100,7 +113,10 @@ declare global {
       getParams: (key: string) => Promise<string>;
       saveConfig: (key: string) => Promise<string>;
       checkPass: () => Promise<string>;
+      setPass: (pass: string) => Promise<string>;
       clearForm: () => Promise<string>;
+      saveDarkMode: (darkMode: boolean) => Promise<string>;
+      getDarkMode: () => Promise<string>;
     };
   }
 }

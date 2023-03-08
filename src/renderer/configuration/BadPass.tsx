@@ -21,65 +21,56 @@
  * SOFTWARE.
  */
 import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Modal, Button } from 'react-bootstrap';
 import { ExclamationOctagon } from 'react-bootstrap-icons';
+import PropTypes from 'prop-types';
 
-export default function DireWarning({
+export default function BadPass({
   show,
-  onHide,
-  onConfirm,
+  errorMessage,
+  callback
 }: {
   show: boolean;
-  onHide: (value: boolean) => void;
-  onConfirm: (value: boolean) => void;
+  errorMessage: string;
+  callback: () => void;
 }): JSX.Element {
-  const [showConfig, setShowConfig] = useState<boolean>(false);
+  const [showBadPass, setShowBadPass] = useState<boolean>(false);
 
   useEffect(() => {
-    setShowConfig(show);
+    setShowBadPass(show);
   }, [show]);
 
-  const handleConfirm = () => {
-    setShowConfig(false);
-    onConfirm(true);
-  };
 
   const handleClose = () => {
-    setShowConfig(false);
-    onHide(true);
+    setShowBadPass(false);
+    callback();
   };
 
   return (
-    <Modal show={showConfig} onHide={handleClose}>
+    <Modal show={showBadPass} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>
-          <h1 style={{ color: 'red', textAlign: 'center' }}><ExclamationOctagon /> Warning</h1>
+          <h1 style={{ color: 'red', textAlign: 'center' }}>
+            <ExclamationOctagon /> Warning
+          </h1>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>
-          This will delete all the links in your history!
-          <br />
-          This cannot be undone!
-          <br />
-          Are you sure you want to continue?
+          {errorMessage}
         </p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button variant="danger" onClick={handleConfirm}>
-          Confirm
+          Close
         </Button>
       </Modal.Footer>
     </Modal>
   );
 }
 
-DireWarning.propTypes = {
+BadPass.propTypes = {
   show: PropTypes.bool.isRequired,
-  onHide: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  callback: PropTypes.func.isRequired,
 };

@@ -5,10 +5,10 @@
 ```
 react_devtools_backend.js:2540 Warning: validateDOMNesting(...): <div> cannot appear as a child of <select>.
 ```
-- [-] Move BitLy button up to the top of the page
+- [x] Move BitLy button up to the top of the page
 - [X] Enable/disable fields bug
-- [-] **Maybe** add config for QR Codes
-- [ ] Add clear-form button
+- [x] **Maybe** add config for QR Codes
+- [x] Add clear-form button
 - [X] Save Config to LocalStorage
 - [X] Password-protect config
   - [X] Default Password
@@ -17,5 +17,13 @@ react_devtools_backend.js:2540 Warning: validateDOMNesting(...): <div> cannot ap
   - [X] Password Form
   - [X] Check entered password
   - [X] Open Config on good passwd
-  - [ ] Error on bad Passwd
+  - [X] Error on bad Passwd
 - [X] Fix menu.tsx file for new menu items
+- [X] Add a way to change/set the password
+- [X] Dark Mode
+- [X] Link History
+- [ ] change main image
+- [ ] change pill image?
+- [ ] Bitly configuration
+- [ ] Installer with the default config file
+- [X] Fix configuration callbacks

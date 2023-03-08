@@ -20,20 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import React from 'react';
+import PropTypes from 'prop-types';
 import './hyde.css';
 
-export default function MainHeader() {
+export default function MainHeader({dark} : {dark: boolean}) {
+  const [darkMode, setDarkMode] = React.useState(dark);
+  const [darkClass, setDarkClass] = React.useState('post-title header-stuff');
+
+  React.useEffect(() => {
+    setDarkMode(dark);
+    dark ? setDarkClass('post-title header-stuff-dark') : setDarkClass('post-title header-stuff');
+  }, [dark]);
+
   return (
     <main className="content">
       <div className="posts">
         <article className="post">
           <h4
-            className="post-title header-stuff"
+            className={darkClass}
             style={{ textAlign: 'center' }}
           >
             UTM Link Builder and QR Code Generator
           </h4>
-          <p className="header-stuff" style={{ textAlign: 'center' }}>
+          <p className={darkClass} style={{ textAlign: 'center' }}>
             Posting a link back to a web resource?
             <br />
             Create a trackable link and make it count!
@@ -43,3 +53,7 @@ export default function MainHeader() {
     </main>
   );
 }
+
+MainHeader.propTypes = {
+  dark: PropTypes.bool.isRequired,
+};

@@ -31,32 +31,55 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
+import { app, BrowserWindow, autoUpdater, dialog, shell, ipcMain } from 'electron';
+// import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import Store from 'electron-store';
 import { UtmParams, defaultUTMParams, QRSettings, defaultQRSettings } from '../renderer/types';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { LinkData } from '../renderer/types';
-import { dialog } from 'electron';
 import uuid from 'react-uuid';
 
 
 
 const electronApp = require('electron').app;
 
-const home = process.env.HOME || process.env.USERPROFILE;
+const home = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH || './';
 const store = new Store();
 const defaultConfig: UtmParams = defaultUTMParams;
+const version = 'v1.6.3'
+const server = 'http://update-server-davidgs.vercel.app/';
+const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
+const up = autoUpdater;
+up.setFeedURL({ url });
 class AppUpdater {
   constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    log.verbose('AppUpdater::constructor');
+    log.transports.file.level = 'debug';
+    up.checkForUpdates();
   }
 }
+
+setInterval(() => {
+  up.checkForUpdates();
+}, 86400600);
+
+up.on('update-downloaded', (event, releaseNotes, releaseName) => {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Restart', 'Later'],
+    title: 'Application Update',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail:
+      'A new version has been downloaded. Restart the application to apply the updates.',
+  }
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall()
+  })
+})
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -112,7 +135,6 @@ ipcMain.handle('save-svg', (event: Event, svg: string) => {
     filters: [{ name: 'SVG', extensions: ['svg'] }],
   };
   dialog.showSaveDialog(options).then((result) => {
-    console.log(svg);
     if (!result.canceled) {
       const fs = require('fs');
       fs.writeFile(result.filePath, svg, (err: any) => {
@@ -157,10 +179,15 @@ ipcMain.handle('get-config', () => {
 ipcMain.handle('check-passwd', () => {
   return JSON.stringify(
     store.get(
-      'admin-passwd',
-      '27c8b224d0446d0fd76dc67c6f783f69e6b29cd8f43536306b7b8fad8266e82109afde3d4eb19b576f29bbc74807f06ba2ba5d0e7394b874df4dc8edcb8d8dea'
+       'admin-passwd', '27c8b224d0446d0fd76dc67c6f783f69e6b29cd8f43536306b7b8fad8266e82109afde3d4eb19b576f29bbc74807f06ba2ba5d0e7394b874df4dc8edcb8d8dea'
     )
   );
+});
+
+ipcMain.handle('set-passwd', (event: Event, passwd: string) => {
+  store.delete('admin-passwd');
+  store.set('admin-passwd', passwd);
+  return(JSON.stringify(store.get('admin-passwd', '')));
 });
 
 /*
@@ -192,6 +219,16 @@ ipcMain.handle('get-params', (e: Event, key: string) => {
     default:
       return JSON.stringify(params);
   }
+});
+
+ipcMain.handle('save-dark-mode', (e: Event, darkMode: boolean) => {
+  store.delete('dark-mode');
+  store.set('dark-mode', darkMode);
+  return JSON.stringify(store.get('dark-mode', false));
+});
+
+ipcMain.handle('get-dark-mode', () => {
+  return(JSON.stringify(store.get('dark-mode', false)));
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -233,9 +270,9 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.6.13',
+    applicationVersion: 'v1.7.0',
     copyright: '© 2023',
-    version: 'b1034',
+    version: 'b10',
     credits:
       'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],

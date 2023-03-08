@@ -32,6 +32,7 @@ import {
 } from 'react-bootstrap';
 import { QRSettings, defaultQRSettings } from 'renderer/types';
 import PropTypes from 'prop-types';
+import { Gear, GearFill } from 'react-bootstrap-icons';
 
 export default function QRConfigForm({
   show,
@@ -50,10 +51,13 @@ export default function QRConfigForm({
   const [myQRSettings, setMyQRSettings] = useState<QRSettings>(qrSettings);
   const [initSize, setInitSize] = useState<number>(220);
   const [initExtension, setInitExtension] = useState<string>('png');
+  const [darkMode, setDarkMode] = useState<boolean>(false);
 
   useEffect(() => {
     setShowConfig(show);
   }, [show]);
+
+  
 
   useEffect(() => {
     setMyQRSettings(qrSettings);

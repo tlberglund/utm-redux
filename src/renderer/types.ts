@@ -142,6 +142,7 @@ export const defaultUTMTerm: UtmObj = {
     { key: 'angel', value: 'Angel' },
     { key: 'baidu', value: 'Baidu' },
     { key: 'bing', value: 'Bing' },
+    { key: 'conf-talk', value: 'Conference Talk' },
     { key: 'discord', value: 'Discord' },
     { key: 'duckduckgo', value: 'Duck Duck Go' },
     { key: 'dev-to', value: 'Dev.To' },
