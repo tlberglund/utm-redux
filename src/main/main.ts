@@ -48,7 +48,8 @@ const electronApp = require('electron').app;
 const home = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH || './';
 const store = new Store();
 const defaultConfig: UtmParams = defaultUTMParams;
-const version = 'v1.6.3'
+const currentVersion = 'v1.7.1'
+const currentBuild = 'b11'
 const server = 'http://update-server-davidgs.vercel.app/';
 const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
@@ -270,9 +271,9 @@ const createWindow = async () => {
 
   const options = {
     applicationName: 'UTM Builder',
-    applicationVersion: 'v1.7.0',
+    applicationVersion: {currentVersion},
     copyright: '© 2023',
-    version: 'b10',
+    version: {currentBuild},
     credits:
       'Credits:\n\t• David G. Simmons\n\t• StarTree Developer Relations Team\n\t• Electron React Boilerplate',
     authors: ['David G. Simmons'],

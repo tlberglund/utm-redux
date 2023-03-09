@@ -472,7 +472,12 @@ a.sidebar-nav-item:focus {
 }
 
 .header-stuff {
-  color: #0B3665
+  color: #0B3665;
+}
+ .content .header-stuff a,
+.related-posts li a:hover {
+  color: #343a40;
+  ;
 }
 
 .header-stuff-dark {

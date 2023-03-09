@@ -39,7 +39,8 @@ export default function HistoryChooser({
   const [historyList, setHistoryList] = useState<LinkData[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(dark);
   const [darkClass, setDarkClass] = useState<string>('header-stuff');
-
+  const [textStyle, setTextStyle] = useState<string>(`style={{ color: '#adb5bd'}}`);
+  const lightStyle = { color: '#0B3665' };
   const displayValue = 'History...';
   useEffect(() => {
     setHistoryList(history);
@@ -48,12 +49,13 @@ export default function HistoryChooser({
   useEffect(() => {
     setDarkMode(dark);
     dark ? setDarkClass('header-stuff-dark') : setDarkClass('header-stuff');
+    dark ? setTextStyle(`style={{ color: '#adb5bd'}}`) : setTextStyle(`style={{ color: '#0B3665'}}`);
   }, [dark]);
 
   const items = historyList.map((item: LinkData) => {
     return (
       <Dropdown.Item
-        style={{ color: 'black' }}
+        color={darkMode ? '#adb5bd' : '#0B3665'}
         id={`${item.uuid}`}
         key={`${item.uuid}`}
         value={item.uuid}
