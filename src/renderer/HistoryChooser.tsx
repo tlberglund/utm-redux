@@ -75,7 +75,8 @@ export default function HistoryChooser({
     <>
       <OverlayTrigger
         placement="auto"
-        overlay={<Tooltip>All of your saved links</Tooltip>}
+        delay={{ show: 250, hide: 300 }}
+        overlay={<Tooltip id='history-chooser-tooltip'>All of your saved links</Tooltip>}
       >
         <DropdownButton
           variant={darkMode ? 'icon-only-dark' : 'icon-only'}

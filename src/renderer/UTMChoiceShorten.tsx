@@ -97,7 +97,11 @@ export default function UTMChoice({
   }, [enabled]);
 
   return (
-    <OverlayTrigger placement="top" overlay={<Tooltip>{tooltip}</Tooltip>}>
+    <OverlayTrigger
+      placement="top"
+      delay={{ show: 250, hide: 300 }}
+      overlay={<Tooltip id={`${targetType}-choice-tooltip`}>{tooltip}</Tooltip>}
+    >
       <FloatingLabel label={showName ? `${label} (${targetType})` : label}>
         <Form.Select
           required
@@ -106,25 +110,28 @@ export default function UTMChoice({
           id={targetType}
           disabled={!enableChoice}
           onChange={(eventKey) => {
-              const v = eventKey.target.value;
-              if (v === 'Choose one ...') {
-                valueChanged('');
-                return;
-              }
-              const vals = v?.split(' ');
-              let matches: string | undefined = '';
-              if (vals.length > 1) {
-                matches = v?.match(/\b(\w)/g)?.join('').toLowerCase();
-              } else {
-                matches = v?.toLowerCase();
-              }
-              if (matches) {
-                valueChanged(matches);
-              } else {
-                valueChanged('');
-              }
-              selectedValue(eventKey);
-              // eventKey.target.value.replace(/ /g, '_').toLowerCase()
+            const v = eventKey.target.value;
+            if (v === 'Choose one ...') {
+              valueChanged('');
+              return;
+            }
+            const vals = v?.split(' ');
+            let matches: string | undefined = '';
+            if (vals.length > 1) {
+              matches = v
+                ?.match(/\b(\w)/g)
+                ?.join('')
+                .toLowerCase();
+            } else {
+              matches = v?.toLowerCase();
+            }
+            if (matches) {
+              valueChanged(matches);
+            } else {
+              valueChanged('');
+            }
+            selectedValue(eventKey);
+            // eventKey.target.value.replace(/ /g, '_').toLowerCase()
           }}
           value={displayValue}
         >

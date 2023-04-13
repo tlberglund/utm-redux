@@ -91,7 +91,11 @@ function UTMTextField({
 
   return (
     <>
-      <OverlayTrigger placement="top" overlay={<Tooltip>{tooltip}</Tooltip>}>
+      <OverlayTrigger
+        placement="top"
+        delay={{ show: 250, hide: 300 }}
+        overlay={<Tooltip id={`${tType}-tooltip`}>{tooltip}</Tooltip>}
+      >
         <FloatingLabel
           label={
             // eslint-disable-next-line no-nested-ternary
@@ -113,6 +117,8 @@ function UTMTextField({
             value={myValue}
             onChange={(eventKey) => {
               if (!qrOnlyState) {
+                setMyValue(eventKey.target.value);
+
                 valueChanged(
                   eventKey.target.value.replace(/ /g, '-').toLowerCase()
                 );

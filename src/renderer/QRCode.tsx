@@ -302,7 +302,7 @@ export default function QCode({
                   id="react-qrcode-logo"
                   value={qrSettings.QRProps.value}
                   size={qrSize}
-                  bgColor='transparent' // {qrSettings.QRProps.bgColor}
+                  bgColor="transparent" // {qrSettings.QRProps.bgColor}
                   fgColor={qrSettings.QRProps.fgColor}
                   logoImage={qrSettings.QRProps.logoImage}
                   qrStyle={qrSettings.QRProps.qrStyle}
@@ -319,11 +319,16 @@ export default function QCode({
             </OverlayTrigger>
           </Row>
           <Row style={{ textAlign: 'center', margin: 'auto' }}>
-            <Col sm="8"  />
+            <Col sm="8" />
             <Col sm="2">
               <OverlayTrigger
                 placement="auto"
-                overlay={<Tooltip id='download-qr-tooltip'>Download your QR Code</Tooltip>}
+                delay={{ show: 250, hide: 300 }}
+                overlay={
+                  <Tooltip id="download-qr-tooltip">
+                    Download your QR Code
+                  </Tooltip>
+                }
               >
                 <Button
                   variant={darkMode ? 'icon-only-dark' : 'icon-only'}
@@ -341,7 +346,10 @@ export default function QCode({
             <Col sm="2">
               <OverlayTrigger
                 placement="auto"
-                overlay={<Tooltip id='adjust-qr-tooltip'>Adjust your QR Code</Tooltip>}
+                delay={{ show: 250, hide: 300 }}
+                overlay={
+                  <Tooltip id="adjust-qr-tooltip">Adjust your QR Code</Tooltip>
+                }
               >
                 <Button
                   variant={darkMode ? 'icon-only-dark' : 'icon-only'}

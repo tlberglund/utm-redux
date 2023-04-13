@@ -144,6 +144,7 @@ export default function SideNav({
               <Col>
                 <OverlayTrigger
                   placement="right"
+                  delay={{ show: 250, hide: 300 }}
                   overlay={
                     <Tooltip id="config-tooltip">
                       Edit the Configuration

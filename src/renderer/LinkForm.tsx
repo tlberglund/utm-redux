@@ -388,7 +388,7 @@ export default function LinkForm({ dark }: { dark: boolean }): JSX.Element {
       {/* bitly button */}
       <div style={{ width: '100%' }}>
         <div style={{ width: '18%', display: 'inline-block' }}>
-        {/* <OverlayTrigger
+          {/* <OverlayTrigger
           placement="auto"
           overlay={
             <Tooltip id="bitly-tooltip">
@@ -404,85 +404,100 @@ export default function LinkForm({ dark }: { dark: boolean }): JSX.Element {
             bitlyEnabled={enableBitly}
             valueChanged={setUseBitly}
           />
-        {/* </OverlayTrigger> */}
+          {/* </OverlayTrigger> */}
         </div>
         {/* qr only button */}
         <div style={{ width: '22%', display: 'inline-block' }}>
-        <OverlayTrigger
-          placement="auto"
-          overlay={
-            <Tooltip id="qr-only-tooltip">
-              Just generate a QR Code with no UTM parameters.
-            </Tooltip>
-          }
-        >
-          <Form.Check
-            type="switch"
-            id="qr-only-show"
-            label="QR Code Only"
-            checked={qrOnly}
-            style={{ float: 'left' }}
-            onChange={(e) => {
-              setQrOnly(e.target.checked);
-            }}
-          />
-        </OverlayTrigger>
+          <OverlayTrigger
+            placement="auto"
+            delay={{ show: 250, hide: 300 }}
+            overlay={
+              <Tooltip id="qr-only-tooltip">
+                Just generate a QR Code with no UTM parameters.
+              </Tooltip>
+            }
+          >
+            <Form.Check
+              type="switch"
+              id="qr-only-show"
+              label="QR Code Only"
+              checked={qrOnly}
+              style={{ float: 'left' }}
+              onChange={(e) => {
+                setQrOnly(e.target.checked);
+              }}
+            />
+          </OverlayTrigger>
         </div>
         {/* history, save & clear buttons */}
-        <div style={{ width: '60%', display: 'inline-block', alignItems: 'center' }}>
+        <div
+          style={{
+            width: '60%',
+            display: 'inline-block',
+            alignItems: 'center',
+          }}
+        >
           <div style={{ width: '50%', display: 'inline-block' }}></div>
-        {/* history button */}
-        <div style={{ width: '34%', display: 'inline-block', verticalAlign: 'top' }}>
-          <HistoryChooser
-            history={linkHistory}
-            dark={darkMode}
-            callback={fillHistory}
-          />
-        </div>
-        {/* save button */}
-        <div style={{ width: '8%', display: 'inline-block' }}>
-        <OverlayTrigger
-          placement="auto"
-          overlay={
-            <Tooltip id="save-btn-tooltip">
-              Save the current link to your history.
-            </Tooltip>
-          }
-        >
-          <Button
-            size="sm"
-            id="save-btn"
-            variant={darkMode ? 'icon-only-dark' : 'icon-only'}
-            onClick={saveLink}
-            className={darkClass}
-            style={{ float: 'right' }}
+          {/* history button */}
+          <div
+            style={{
+              width: '34%',
+              display: 'inline-block',
+              verticalAlign: 'top',
+            }}
           >
-            {darkMode ? <Save /> : <SaveFill />}
-          </Button>
-        </OverlayTrigger>
-        </div>
-        {/* clear button */}
-        <div style={{ width: '1.5%', display: 'inline-block' }}>
-        <OverlayTrigger
-          placement="auto"
-          overlay={
-            <Tooltip id="clear-btn-tooltip">
-              Clear the form and start over.
-            </Tooltip>
-          }
-        >
-          <Button
-            size="sm"
-            variant={darkMode ? 'icon-only-dark' : 'icon-only'}
-            color={darkMode ? '#adb5bd' : '#0B3665'}
-            className={darkClass}
-            onClick={clearForm}
-            style={{ float: 'right', marginRight: '-30px' }}
-          >
-            {darkMode ? <XCircle /> : <XCircleFill />}
-          </Button>
-        </OverlayTrigger>
-        </div>
+            <HistoryChooser
+              history={linkHistory}
+              dark={darkMode}
+              callback={fillHistory}
+            />
+          </div>
+          {/* save button */}
+          <div style={{ width: '8%', display: 'inline-block' }}>
+            <OverlayTrigger
+              placement="auto"
+              delay={{ show: 250, hide: 300 }}
+              overlay={
+                <Tooltip id="save-btn-tooltip">
+                  Save the current link to your history.
+                </Tooltip>
+              }
+            >
+              <Button
+                size="sm"
+                id="save-btn"
+                variant={darkMode ? 'icon-only-dark' : 'icon-only'}
+                onClick={saveLink}
+                className={darkClass}
+                style={{ float: 'right' }}
+              >
+                {darkMode ? <Save /> : <SaveFill />}
+              </Button>
+            </OverlayTrigger>
+          </div>
+          {/* clear button */}
+          <div style={{ width: '1.5%', display: 'inline-block' }}>
+            <OverlayTrigger
+              placement="auto"
+              delay={{ show: 250, hide: 300 }}
+              overlay={
+                <Tooltip id="clear-btn-tooltip">
+                  Clear the form and start over.
+                </Tooltip>
+              }
+            >
+              <Button
+                size="sm"
+                variant={darkMode ? 'icon-only-dark' : 'icon-only'}
+                color={darkMode ? '#adb5bd' : '#0B3665'}
+                className={darkClass}
+                onClick={clearForm}
+                style={{ float: 'right', marginRight: '-30px' }}
+              >
+                {darkMode ? <XCircle /> : <XCircleFill />}
+              </Button>
+            </OverlayTrigger>
+          </div>
         </div>
       </div>
       {/* utm_target */}
@@ -602,7 +617,8 @@ export default function LinkForm({ dark }: { dark: boolean }): JSX.Element {
           <InputGroup className="mb-3" size="lg">
             <OverlayTrigger
               placement="top"
-              overlay={<Tooltip>This value is auto-generated</Tooltip>}
+              delay={{ show: 250, hide: 300 }}
+              overlay={<Tooltip id='auto-gen-tooltip'>This value is auto-generated</Tooltip>}
             >
               <FloatingLabel label="Final Campaign String">
                 <FormControl

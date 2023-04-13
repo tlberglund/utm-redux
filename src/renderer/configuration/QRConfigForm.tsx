@@ -169,8 +169,11 @@ export default function QRConfigForm({
             <Col sm="6" style={{ paddingLeft: '1rem' }}>
               <div key="inline-radio" className="mb-3">
                 <OverlayTrigger
+                  delay={{ show: 250, hide: 300 }}
                   placement="auto"
-                  overlay={<Tooltip>Download as a PNG</Tooltip>}
+                  overlay={
+                    <Tooltip id="png-tooltip">Download as a PNG</Tooltip>
+                  }
                 >
                   <Form.Check
                     inline
@@ -187,7 +190,10 @@ export default function QRConfigForm({
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="auto"
-                  overlay={<Tooltip>Download as a JPG</Tooltip>}
+                  delay={{ show: 250, hide: 300 }}
+                  overlay={
+                    <Tooltip id="jpg-tooltip">Download as a JPG</Tooltip>
+                  }
                 >
                   <Form.Check
                     inline
@@ -202,7 +208,8 @@ export default function QRConfigForm({
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="auto"
-                  overlay={<Tooltip>Download as a JPG</Tooltip>}
+                  delay={{ show: 250, hide: 300 }}
+                  overlay={<Tooltip id='svg-tooltip'>Download as a SVG</Tooltip>}
                 >
                   <Form.Check
                     inline
@@ -218,7 +225,7 @@ export default function QRConfigForm({
               </div>
             </Col>
           </Row>
-          <Form.Group as={Row} style={{margin: 'auto'}}>
+          <Form.Group as={Row} style={{ margin: 'auto' }}>
             <Col sm={8}>&nbsp;</Col>
             <Col sm={1}>
               <Button variant="primary" type="submit">

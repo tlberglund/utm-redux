@@ -232,7 +232,10 @@ export default function PasswordForm({
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={configPass || changePass ? handleSubmitNew : handleSubmit} noValidate>
+        <Form
+          onSubmit={configPass || changePass ? handleSubmitNew : handleSubmit}
+          noValidate
+        >
           {/* password field */}
           <Form.Group controlId="formBasicPassword">
             <FloatingLabel label="Password">
@@ -253,6 +256,7 @@ export default function PasswordForm({
           {!configPass && (
             <OverlayTrigger
               placement="right"
+              delay={{ show: 250, hide: 300 }}
               overlay={
                 <Tooltip id="pass-tooltip">Change the Admin Password</Tooltip>
               }
