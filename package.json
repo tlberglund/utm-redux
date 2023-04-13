@@ -1,5 +1,7 @@
 {
   "description": "A UTM Link Builder App",
+  "name": "utm-redux",
+  "productName": "UTM Linker",
   "keywords": [
     "electron",
     "react",

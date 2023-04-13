@@ -151,6 +151,8 @@ export const defaultUTMTerm: UtmObj = {
     { key: 'github', value: 'GitHub' },
     { key: 'gitlab', value: 'GitLab' },
     { key: 'google', value: 'Google' },
+    { key: 'hacker-news', value: 'Hacker News' },
+    { key: 'in-person', value: 'In Person' },
     { key: 'linkedin', value: 'LinkedIn' },
     { key: 'medium', value: 'Medium' },
     { key: 'meetup', value: 'Meetup' },

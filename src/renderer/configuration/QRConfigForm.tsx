@@ -57,7 +57,7 @@ export default function QRConfigForm({
     setShowConfig(show);
   }, [show]);
 
-  
+
 
   useEffect(() => {
     setMyQRSettings(qrSettings);
@@ -67,8 +67,10 @@ export default function QRConfigForm({
 
   const onExtensionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const qSet: QRSettings = {...myQRSettings};
+    console.log(event.target.id.split('-')[2]);
     qSet.QRType = event.target.id.split('-')[2];
     setMyQRSettings(qSet);
+    extensionCallback(event.target.id.split('-')[2]);
   };
 
   const onSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -31,7 +31,7 @@ import { Button, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
 import { ClipboardData, Clipboard2CheckFill } from 'react-bootstrap-icons';
 import uuid from 'react-uuid';
 import QRConfigForm from './configuration/QRConfigForm';
-import logo from '../../assets/images/logo-mark_fill.png';
+import logo from '../../assets/images/logo-center.svg';
 import { defaultQRSettings, DefaultQRStyle, QRSettings } from './types';
 import { Gear, GearFill, Download } from 'react-bootstrap-icons';
 import PropTypes from 'prop-types';
@@ -60,7 +60,9 @@ export default function QCode({
   const [iconButtonClass, setIconButtonClass] = useState<string>('button-icon header-stuff');
   const [darkClass, setDarkClass] = useState<string>('header-stuff');
   const ref = useRef(null);
+  const defaultLogoRatio=0.23;
 
+  /* Keep Dark Mode up to date */
   useEffect(() => {
     setDarkMode(dark);
     dark ? setDarkIconClass('copy-icon header-stuff-dark') : setDarkClass('copy-icon header-stuff');
@@ -68,6 +70,7 @@ export default function QCode({
     dark ? setDarkClass('header-stuff-dark') : setDarkClass('header-stuff');
   }, [dark]);
 
+  /* Keep QR Settings up to date */
   useEffect(() => {
     window.electronAPI
       .getQRSettings()
@@ -85,13 +88,14 @@ export default function QCode({
       });
    }, []);
 
+   /* Save the QR Code as an SVG */
    const saveSVG = () => {
       const canvas = document.getElementById(
         'react-qrcode-logo'
       ) as HTMLCanvasElement;
       const params = {
-        background: qrSettings.QRProps?.bgColor,
-        color: '#0B263E',
+        background: 'none',
+        color: qrSettings.QRProps.fgColor,
       };
       const dataURL = canvas?.toDataURL(`image/${fileExt}`);
       // const a = document.createElement('a');
@@ -108,11 +112,38 @@ export default function QCode({
           });
       });
     };
+
+    /* Update size of QR Code and adjust the logo size if needed
+     * @param size - the new size of the QR Code
+    */
+    const sizeChange = (size: number) => {
+      const qSet: QRSettings = {...qrSettings};
+      const qr = {...qSet.QRProps};
+      qr.size = size;
+      qr.logoWidth = size*defaultLogoRatio;
+      qr.logoHeight = size*defaultLogoRatio;
+      qSet.QRProps = qr;
+      setQRSettings(qSet);
+      setQRSize(size);
+    };
+
+    /* Save the QR Code to user's machine */
   const onDownloadClick = () => {
     if(qrSettings.QRType === 'svg') {
       saveSVG();
       return;
     }
+    const c2 = document.createElement('canvas') as HTMLCanvasElement;
+    const ctx2 = c2.getContext('2d');
+    const img = new Image();
+    img.src = logo;
+    img.onload = () => {
+      c2.width = img.width;
+      c2.height = img.height;
+      ctx2?.drawImage(img, 0, 0);
+      const dataURL2 = c2.toDataURL('image/svg');
+      console.log(dataURL2);
+    };
     const canvas = document.getElementById(
       'react-qrcode-logo'
     ) as HTMLCanvasElement;
@@ -123,6 +154,7 @@ export default function QCode({
     a.click();
   };
 
+  /* Show the configuration window */
   const showConfigWindow = () => {
     setShowConfig(!showConfig);
   };
@@ -137,6 +169,9 @@ export default function QCode({
       .catch((err) => console.error('Error: ', err));
   }
 
+  /* Update the QR Code properties
+   * @param link - the link to be encoded in the QR Code
+  */
   const updateQRProps = (link: string) => {
     const qSet: QRSettings = {...qrSettings};
     const qrProps: IProps = {...qSet.QRProps};
@@ -155,6 +190,16 @@ export default function QCode({
   useEffect(() => {
     setQrState(qrOnly);
   }, [qrOnly]);
+
+  /* Update the QR Code type
+    * @param type - the new type of the QR Code
+  */
+  const updateQRType = (type: string) => {
+    const qSet: QRSettings = {...qrSettings};
+    qSet.QRType = type;
+    setQRSettings(qSet);
+    setFileExt(type);
+  };
 
   return (
     <div>
@@ -257,7 +302,7 @@ export default function QCode({
                   id="react-qrcode-logo"
                   value={qrSettings.QRProps.value}
                   size={qrSize}
-                  bgColor={qrSettings.QRProps.bgColor}
+                  bgColor='transparent' // {qrSettings.QRProps.bgColor}
                   fgColor={qrSettings.QRProps.fgColor}
                   logoImage={qrSettings.QRProps.logoImage}
                   qrStyle={qrSettings.QRProps.qrStyle}
@@ -317,8 +362,8 @@ export default function QCode({
         <QRConfigForm
           show={showConfig}
           qrSettings={qrSettings}
-          sizeCallback={setQRSize}
-          extensionCallback={setFileExt}
+          sizeCallback={sizeChange}
+          extensionCallback={updateQRType}
           onHide={showConfigWindow}
         />
       </div>

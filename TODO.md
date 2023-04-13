@@ -24,6 +24,6 @@ react_devtools_backend.js:2540 Warning: validateDOMNesting(...): <div> cannot ap
 - [X] Link History
 - [ ] change main image
 - [ ] change pill image?
-- [ ] Bitly configuration
+- [X] Bitly configuration
 - [ ] Installer with the default config file
 - [X] Fix configuration callbacks
